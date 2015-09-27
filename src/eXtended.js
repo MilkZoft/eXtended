@@ -8,15 +8,15 @@ function eXtended() {
     /**
      * Private methods
      */
-    let _logger = function(message) {
+    let _logger = (message) => {
         console.log(message);
     };
 
-    let _forEach = function(obj, callback) {
+    let _forEach = (obj, callback) => {
         Object.keys(obj).forEach(callback);
     };
 
-    let _getProperty = function(property) {
+    let _getProperty = (property) => {
         let properties = {
             className: 'className',
             content: 'innerHTML'
@@ -25,7 +25,7 @@ function eXtended() {
         return properties[property] || '';
     };
 
-    let _newElement = function(element) {
+    let _newElement = (element) => {
         return document.createElement(element);
     };
 
@@ -39,14 +39,14 @@ function eXtended() {
     return eXtended;
 
     /**
-     * Public Methods
+     * Public methods
      */
     function create(element, props = {}) {
         let el = _newElement(element);
         let value;
         let property;
 
-        _forEach(props, function(key) {
+        _forEach(props, key => {
             value = props[key] || '';
             property = _getProperty(key);
 
