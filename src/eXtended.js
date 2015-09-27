@@ -64,7 +64,10 @@ function eXtended() {
 
         if (type === '#') {
             element = document.getElementById(elementName);
-            console.log('Si', element);
+        } else if (type === '.') {
+            element = document.getElementsByClassName(elementName);
+        } else {
+            element = document.getElementsByTagName(elementName);
         }
 
         return element;
@@ -72,11 +75,11 @@ function eXtended() {
 
     function render(element, target = false) {
         if (!target) {
-            eXtended.logger('You must specify a target to render an element');
+            _logger('You must specify a target to render an element');
 
             return;
         }
-        console.log(target);
+
         let el = eXtended.element(target);
 
         el.appendChild(element);
