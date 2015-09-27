@@ -6,11 +6,11 @@
 
 ## Setup Instructions
 
-1. Clone the repository in some Apache or NGinx server.
+Clone the repository in some Apache or NGinx server.
 
 `git clone https://github.com/MilkZoft/eXtended.git`
 
-2. Open the demo file at (http://localhost/eXtended/src/index.html) using Mozilla Firefox 42 or some other browser that supports ECMAScript 6.
+Open the demo file at (http://localhost/eXtended/src/index.html) using Mozilla Firefox 42 or some other browser that supports ECMAScript 6.
 
 ## Collaboration
 
