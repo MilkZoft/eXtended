@@ -6,7 +6,7 @@ function eXtended() {
     let eXtended = this;
 
     /**
-     * Privage methods
+     * Private methods
      */
     let _logger = function(message) {
         console.log(message);
@@ -39,7 +39,7 @@ function eXtended() {
     return eXtended;
 
     /**
-     * Methods
+     * Public Methods
      */
     function create(element, props = {}) {
         let el = _newElement(element);
