@@ -16,4 +16,4 @@ Open the demo file at (<http://localhost/eXtended/src/index.html>) using Mozilla
 
 ## Collaboration
 
-This is an experimental project, if you want to collaborate with the project feel free to fork the project and send us you Pull Requests.
+This is an experimental project, if you want to collaborate with the project feel free to fork the project and send us your Pull Requests.
