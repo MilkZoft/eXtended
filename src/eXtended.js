@@ -86,12 +86,28 @@ function eXtended() {
         return document.createElement(element);
     };
 
+    let _getDefaultAttrs = (element, url = false) => {
+        let properties = {
+            link: {
+                rel: 'stylesheet',
+                type: 'text/css',
+                href:  url || 'someStyle.css',
+                media: 'all'
+            },
+            script: {
+                type: 'application/javascript',
+                src: url || 'someScript.js'
+            }
+        };
+
+        return properties[element];
+    };
+
     /**
      * Exported methods
      */
     eX.create = create;
     eX.element = element;
-    eX.getDefaultAttrs = getDefaultAttrs;
     eX.render = render;
 
     return eX;
@@ -124,7 +140,7 @@ function eXtended() {
         }
 
         if (_isIn(tag, specialTags) && props) {
-            props = eX.getDefaultAttrs(tag, props);
+            props = _getDefaultAttrs(tag, props);
         }
 
         if (props instanceof Object) {
@@ -147,23 +163,6 @@ function eXtended() {
 
     function element(elementName = false) {
         return _getElement(elementName);
-    }
-
-    function getDefaultAttrs(element, url = false) {
-        let properties = {
-            link: {
-                rel: 'stylesheet',
-                type: 'text/css',
-                href:  url || 'someStyle.css',
-                media: 'all'
-            },
-            script: {
-                type: 'application/javascript',
-                src: url || 'someScript.js'
-            }
-        };
-
-        return properties[element];
     }
 
     function render(target = false, ...elements) {
