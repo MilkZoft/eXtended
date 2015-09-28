@@ -1,9 +1,9 @@
 'use strict';
 
-var eXtended = new eXtended();
+var eX = new eXtended();
 
 function eXtended() {
-    let eXtended = this;
+    let eX = this;
 
     /**
      * Private methods
@@ -32,11 +32,12 @@ function eXtended() {
     /**
      * Exported methods
      */
-    eXtended.create = create;
-    eXtended.element = element;
-    eXtended.render = render;
+    eX.create = create;
+    eX.element = element;
+    eX.getDefaultAttrs = getDefaultAttrs;
+    eX.render = render;
 
-    return eXtended;
+    return eX;
 
     /**
      * Public methods
@@ -80,7 +81,7 @@ function eXtended() {
             return;
         }
 
-        let el = eXtended.element(target);
+        let el = eX.element(target);
 
         el.appendChild(element);
     }
