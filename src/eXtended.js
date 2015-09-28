@@ -99,47 +99,84 @@ function eXtended() {
     /**
      * Public methods
      */
-    function create(element, props = {}) {
-        let el = _newElement(element);
+    function create(tag, props = false, content = false) {
+        let element = _getElementNameAndType(tag);
+        let el = _newElement(element.name);
         let value;
         let property;
+        let type;
+        let specialTags = ['link', 'script'];
 
-        _forEach(props, key => {
-            value = props[key] || '';
-            property = _getProperty(key);
+        if (element.id || element.class) {
+            props = !props ? {} : props;
+        }
+
+        if (content) {
+            el.innerHTML = content;
+        }
+
+        if (element.id) {
+            props.id = element.id;
+        }
+
+        if (element.class) {
+            props.class = element.class;
+        }
+
+        if (_isIn(tag, specialTags) && props) {
+            props = eX.getDefaultAttrs(tag, props);
+        }
+
+        if (props instanceof Object) {
+            _forEach(props, key => {
+                value = props[key] || '';
+                property = _getProperty(key);
+
+                el[property] = value;
+            });
+        } else if (props) {
+            type = _getElementType(props, true);
+            value = type !== 'tag' ? props.substring(1) : props;
+            property = _getProperty(type);
 
             el[property] = value;
-        });
+        }
 
         return el;
     }
 
     function element(elementName = false) {
-        let type = elementName[0];
-        let element;
-
-        elementName = elementName.substring(1);
-
-        if (type === '#') {
-            element = document.getElementById(elementName);
-        } else if (type === '.') {
-            element = document.getElementsByClassName(elementName);
-        } else {
-            element = document.getElementsByTagName(elementName);
-        }
-
-        return element;
+        return _getElement(elementName);
     }
 
-    function render(element, target = false) {
-        if (!target) {
-            _logger('You must specify a target to render an element');
+    function getDefaultAttrs(element, url = false) {
+        let properties = {
+            link: {
+                rel: 'stylesheet',
+                type: 'text/css',
+                href:  url || 'someStyle.css',
+                media: 'all'
+            },
+            script: {
+                type: 'application/javascript',
+                src: url || 'someScript.js'
+            }
+        };
+
+        return properties[element];
+    }
+
+    function render(target = false, ...elements) {
+        if (!target || elements.length === 0) {
+            _log('You must specify a target and element to render');
 
             return;
         }
 
         let el = eX.element(target);
 
-        el.appendChild(element);
+        _forEach(elements, element => {
+            el.appendChild(element);
+        });
     }
 };
