@@ -40,6 +40,46 @@ function eXtended() {
 
         return properties[property] || property;
     };
+
+    let _getElementType = (elementName) => {
+        return _getElement(elementName, true);
+    };
+
+    let _getElement = (elementName, returnType = false) => {
+        let type = elementName[0];
+
+        if (type === '#') {
+            return !returnType ? document.getElementById(elementName.substring(1)) : 'id';
+        } else if (type === '.') {
+            return !returnType ? document.getElementsByClassName(elementName.substring(1)) : 'class';
+        } else {
+            return !returnType ? document.getElementsByTagName(elementName)[0] : 'tag';
+        }
+    };
+
+    let _getElementNameAndType = (tag) => {
+        let hasId = tag.split('#');
+        let hasClasses = tag.split('.');
+        let name = hasClasses.shift();
+        let element = {
+            name: tag
+        };
+
+        if (hasId.length > 1 && hasClasses.length >= 1) {
+            element.name = hasId[0];
+            element.id = hasId[1].substring(0, hasId[1].indexOf('.'));
+            element.class = hasClasses.length > 1 ? hasClasses.join(' ') : hasClasses[0];
+        } else if (hasId.length === 2) {
+            element.name = hasId[0];
+            element.id = hasId[1];
+            element.class = false;
+        } else if(hasClasses.length >= 1) {
+            element.name = name;
+            element.id = false;
+            element.class = hasClasses.length > 1 ? hasClasses.join(' ') : hasClasses[0];
+        }
+
+        return element;
     };
 
     let _newElement = (element) => {
