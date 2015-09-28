@@ -1,12 +1,21 @@
 (function() {
     'use strict';
 
-    var h1 = eXtended.create('h1', {
-        className: 'title',
-        content: 'Hello World!'
+    var h1 = eX.create('h1#myId.myClass', {
+        text: 'Hello World!'
     });
 
-    console.log(h1);
+    var input = eX.create('input', {
+        name: 'user',
+        value: 'Username'
+    });
 
-    eXtended.render(h1, '#title');
+    var span = eX.create('span', '.username', 'Write your username');
+    var link = eX.create('link', 'public/css/mediaqueries/desktop.css');
+    var script = eX.create('script', 'public/js/script.js');
+
+    var p = eX.create('p#center.other.other2');
+
+    eX.render('head', link, script);
+    eX.render('body', h1, input, span, p);
 })();
