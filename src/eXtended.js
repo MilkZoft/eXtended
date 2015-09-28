@@ -32,11 +32,14 @@ function eXtended() {
 
     let _getProperty = (property) => {
         let properties = {
-            className: 'className',
-            content: 'innerHTML'
+            'class': 'className',
+            'tag': 'className',
+            'text': 'innerHTML',
+            'content': 'innerHTML'
         };
 
-        return properties[property] || '';
+        return properties[property] || property;
+    };
     };
 
     let _newElement = (element) => {
