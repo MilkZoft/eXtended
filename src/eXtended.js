@@ -12,8 +12,15 @@ function eXtended() {
         console.log('eXtended:', message);
     };
 
-    let _forEach = (obj, callback) => {
-        Object.keys(obj).forEach(callback);
+    let _forEach = (items, callback) => {
+        if (items instanceof Array) {
+            for (let i = 0; i < items.length; i++) {
+                callback(items[i]);
+            }
+        } else {
+            Object.keys(items).forEach(callback);
+        }
+    };
     };
 
     let _getProperty = (property) => {
