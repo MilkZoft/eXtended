@@ -21,6 +21,13 @@ function eXtended() {
             Object.keys(items).forEach(callback);
         }
     };
+
+    let _isIn = (item, obj) => {
+        if (obj instanceof Array) {
+            return obj.indexOf(item) >= 0;
+        } else {
+            return typeof obj[item] !== 'undefined';
+        }
     };
 
     let _getProperty = (property) => {
