@@ -8,8 +8,8 @@ function eXtended() {
     /**
      * Private methods
      */
-    let _logger = (message) => {
-        console.log(message);
+    let _log = (message) => {
+        console.log('eXtended:', message);
     };
 
     let _forEach = (obj, callback) => {
