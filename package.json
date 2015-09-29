@@ -8,11 +8,12 @@
     "url": "git://github.com/MilkZoft/eXtended.git"
   },
   "devDependencies": {
-    "grunt": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-stylus": "latest",
-    "grunt-githooks": "latest",
-    "grunt-jscs": "latest",
-    "grunt-shell": "latest"
+    "babelify": "latest",
+    "browserify": "latest",
+    "eslint": "latest",
+    "gulp": "latest",
+    "gulp-jscs": "latest",
+    "gulp-jshint": "latest",
+    "vinyl-source-stream": "latest"
   }
 }
