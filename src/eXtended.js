@@ -67,7 +67,6 @@ function Extended() {
      * returnType (*) -> boolean
      */
     let _getElement = (elementName, returnType = false) => {
-        //
         let type = elementName[0];
 
         if (type === '#') {
