@@ -11,19 +11,21 @@ function Extended() {
     const SPECIAL_TAGS = ['link', 'script'];
 
     /**
-     * Logs a message
+     * Logs a message.
      *
-     * message: string
+     * @param {string} message
+     * @internal
      */
     let _log = (message) => {
         console.log('eXtended:', message);
     };
 
     /**
-     * Easy way to iterate over arrays and objects
+     * Easy way to iterate over arrays and objects.
      *
-     * items: array/object
-     * callback: function
+     * @param {array || object} items
+     * @param {function} callback
+     * @protected
      */
     let _forEach = (items, callback) => {
         if (items instanceof Array) {
@@ -36,10 +38,12 @@ function Extended() {
     };
 
     /**
-     * Validates if an item exists into an array or an object
+     * Validates if an item exists into an array or an object.
      *
-     * item: string
-     * obj: array/object
+     * @param {string} item
+     * @param {array/object} obj
+     * @return {boolean} true if the item exists, false if not.
+     * @protected
      */
     let _isIn = (item, obj) => {
         if (obj instanceof Array) {
@@ -52,7 +56,9 @@ function Extended() {
     /**
      * Short cuts for some properties
      *
-     * property: string
+     * @param {string} property
+     * @return {string} element property.
+     * @protected
      */
     let _getProperty = (property) => {
         let properties = {
@@ -68,8 +74,10 @@ function Extended() {
     /**
      * Return an element object depends on type (id, class or tag)
      *
-     * elementName: string
-     * returnType (*): boolean
+     * @param {string} elementName
+     * @param {boolean} returnType = false
+     * @return {object} element object depends on type
+     * @protected
      */
     let _getElement = (elementName, returnType = false) => {
         let type = elementName[0];
@@ -86,16 +94,20 @@ function Extended() {
     /**
      * Return the type of the element (id, class or tag)
      *
-     * elementName: string
+     * @param {string} elementName
+     * @return {string} type of the element (id, class or tag)
+     * @protected
      */
     let _getElementType = (elementName) => {
         return _getElement(elementName, true);
     };
 
     /**
-     * Return the type and name of the element (id, class or tag)
+     * Return the type and name of the element (id, class or tag).
      *
-     * tag: string
+     * @param {string} tag
+     * @return {object} element with properties.
+     * @protected
      */
     let _getElementNameAndType = (tag) => {
         let hasId = tag.split('#');
@@ -141,19 +153,23 @@ function Extended() {
     /**
      * Creates a new element
      *
-     * element: string
+     * @param {string} element
+     * @return {object} new element
+     * @protected
      */
     let _newElement = (element) => {
         return document.createElement(element);
     };
 
     /**
-     * Get default attributes for special tags (like link or script)
+     * Get default attributes for special tags (like link or script).
      *
-     * element: string
-     * url (*): string
+     * @param {string} element
+     * @param {string} url
+     * @return {object} default properties
+     * @protected
      */
-    let _getDefaultAttrs = (element, url = false) => {
+    let _getDefaultAttrs = (element, url) => {
         let properties = {
             link: {
                 rel: 'stylesheet',
@@ -171,10 +187,12 @@ function Extended() {
     };
 
     /**
-     * Validates if a given tag is a special tag
+     * Validates if a given tag is a special tag.
      *
-     * tag: string
-     * props: object
+     * @param {string} tag
+     * @param {object} props
+     * @return {object} props with default attributes.
+     * @protected
      */
     let _isSpecialTag = (tag, props) => {
         if (_isIn(tag, SPECIAL_TAGS) && props) {
@@ -192,13 +210,15 @@ function Extended() {
     return eX;
 
     /**
-     * Creates a new element (with or without id & class)
+     * Creates a new element (with or without id & class).
      *
-     * tag: string
-     * props (*): object/string
-     * content (*): string
+     * @param {string} tag
+     * @param {object || string || boolean} props = false
+     * @param {string} content
+     * @return {object} element with properties.
+     * @public
      */
-    function create(tag, props = false, content = false) {
+    function create(tag, props = false, content) {
         let element = _getElementNameAndType(tag);
         let el = _newElement(element.name);
         let value;
@@ -224,44 +244,52 @@ function Extended() {
             return props;
         };
 
-        props = getProps(element, props);
+        // Builds the object
+        let buildElement = () => {
+            props = getProps(element, props);
 
-        if (content) {
-            el.innerHTML = content;
-        }
+            if (content) {
+                el.innerHTML = content;
+            }
 
-        if (props instanceof Object) {
-            _forEach(props, key => {
-                value = props[key] || '';
-                property = _getProperty(key);
+            if (props instanceof Object) {
+                _forEach(props, key => {
+                    value = props[key] || '';
+                    property = _getProperty(key);
+
+                    el[property] = value;
+                });
+            } else if (props) {
+                type = _getElementType(props, true);
+                value = type !== 'tag' ? props.substring(1) : props;
+                property = _getProperty(type);
 
                 el[property] = value;
-            });
-        } else if (props) {
-            type = _getElementType(props, true);
-            value = type !== 'tag' ? props.substring(1) : props;
-            property = _getProperty(type);
+            }
 
-            el[property] = value;
-        }
+            return el;
+        };
 
-        return el;
+        return buildElement();
     }
 
     /**
-     * Get an element object
+     * Get an element object.
      *
-     * elementName: string
+     * @param {string} elementName
+     * @return {object} element
+     * @public
      */
     function element(elementName) {
         return _getElement(elementName);
     }
 
     /**
-     * Render elements
+     * Render elements.
      *
-     * target: string
-     * elements: ...array
+     * @param {string} target
+     * @param {array} elements
+     * @public
      */
     function render(target, ...elements) {
         if (!target || elements.length === 0) {
