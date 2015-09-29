@@ -1,17 +1,25 @@
 'use strict';
 
-var eX = new eXtended();
+var eX = new Extended();
 
-function eXtended() {
+function Extended() {
     let eX = this;
 
     /**
-     * Private methods
+     * Logs a message
+     *
+     * message -> string
      */
     let _log = (message) => {
         console.log('eXtended:', message);
     };
 
+    /**
+     * Easy way to iterate over arrays and objects
+     *
+     * items    -> array/object
+     * callback -> function
+     */
     let _forEach = (items, callback) => {
         if (items instanceof Array) {
             for (let i = 0; i < items.length; i++) {
@@ -22,6 +30,12 @@ function eXtended() {
         }
     };
 
+    /**
+     * Validates if an item exists into an array or an object
+     *
+     * item -> mixed
+     * obj  -> array/object
+     */
     let _isIn = (item, obj) => {
         if (obj instanceof Array) {
             return obj.indexOf(item) >= 0;
@@ -30,6 +44,11 @@ function eXtended() {
         }
     };
 
+    /**
+     * Short cuts for some properties
+     *
+     * property -> string
+     */
     let _getProperty = (property) => {
         let properties = {
             'class': 'className',
@@ -41,11 +60,14 @@ function eXtended() {
         return properties[property] || property;
     };
 
-    let _getElementType = (elementName) => {
-        return _getElement(elementName, true);
-    };
-
+    /**
+     * Return an element object depends on type (id, class or tag)
+     *
+     * elementName    -> string
+     * returnType (*) -> boolean
+     */
     let _getElement = (elementName, returnType = false) => {
+        //
         let type = elementName[0];
 
         if (type === '#') {
@@ -57,6 +79,20 @@ function eXtended() {
         }
     };
 
+    /**
+     * Return the type of the element (id, class or tag)
+     *
+     * elementName -> string
+     */
+    let _getElementType = (elementName) => {
+        return _getElement(elementName, true);
+    };
+
+    /**
+     * Return the type of the element (id, class or tag)
+     *
+     * elementName -> string
+     */
     let _getElementNameAndType = (tag) => {
         let hasId = tag.split('#');
         let hasClasses = tag.split('.');
@@ -65,27 +101,54 @@ function eXtended() {
             name: tag
         };
 
-        if (hasId.length > 1 && hasClasses.length >= 1) {
-            element.name = hasId[0];
-            element.id = hasId[1].substring(0, hasId[1].indexOf('.'));
-            element.class = hasClasses.length > 1 ? hasClasses.join(' ') : hasClasses[0];
-        } else if (hasId.length === 2) {
-            element.name = hasId[0];
-            element.id = hasId[1];
-            element.class = false;
-        } else if(hasClasses.length >= 1) {
+        // Returns the object element with the name, id and class
+        let getElementObject = (element, name, id, hasClass) => {
             element.name = name;
-            element.id = false;
-            element.class = hasClasses.length > 1 ? hasClasses.join(' ') : hasClasses[0];
-        }
+            element.id = id;
+            element.class = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
 
-        return element;
+            return element;
+        };
+
+        // Returns the id and class values for an element
+        let getIdAndClassValues = (hasId, hasClasses, element) => {
+            if (hasId.length > 1 && hasClasses.length >= 1) {
+                element = __getElementObject(
+                    element,
+                    hasId[0],
+                    hasId[1].substring(0, hasId[1].indexOf('.')),
+                    hasClasses
+                );
+            } else if (hasId.length === 2 || hasClasses.length >= 1) {
+                element = __getElementObject(
+                    element,
+                    hasId.length === 2 ? hasId[0] : name,
+                    hasId.length === 2 ? hasId[1] : false,
+                    hasId.length === 2 ? false    : hasClasses
+                );
+            }
+
+            return element;
+        };
+
+        return getIdAndClassValues(hasId, hasClasses, element);
     };
 
+    /**
+     * Creates a new element
+     *
+     * element -> string
+     */
     let _newElement = (element) => {
         return document.createElement(element);
     };
 
+    /**
+     * Get default attributes for special tags (like link or script)
+     *
+     * element -> string
+     * url (*) -> string
+     */
     let _getDefaultAttrs = (element, url = false) => {
         let properties = {
             link: {
@@ -104,7 +167,7 @@ function eXtended() {
     };
 
     /**
-     * Exported methods
+     * Exporting methods
      */
     eX.create = create;
     eX.element = element;
@@ -113,7 +176,11 @@ function eXtended() {
     return eX;
 
     /**
-     * Public methods
+     * Creates a new element (id, class or tag)
+     *
+     * tag         -> string
+     * props (*)   -> object/string
+     * content (*) -> string
      */
     function create(tag, props = false, content = false) {
         let element = _getElementNameAndType(tag);
@@ -123,24 +190,31 @@ function eXtended() {
         let type;
         let specialTags = ['link', 'script'];
 
-        if (element.id || element.class) {
-            props = !props ? {} : props;
-        }
+        // Get properties for class or id and default attributes
+        let getProps = (element, props) => {
+            if (element.id || element.class) {
+                props = !props ? {} : props;
+            }
+
+            if (element.id) {
+                props.id = element.id;
+            }
+
+            if (element.class) {
+                props.class = element.class;
+            }
+
+            if (_isIn(tag, specialTags) && props) {
+                props = _getDefaultAttrs(tag, props);
+            }
+
+            return props;
+        };
+
+        props = getProps(element, props);
 
         if (content) {
             el.innerHTML = content;
-        }
-
-        if (element.id) {
-            props.id = element.id;
-        }
-
-        if (element.class) {
-            props.class = element.class;
-        }
-
-        if (_isIn(tag, specialTags) && props) {
-            props = _getDefaultAttrs(tag, props);
         }
 
         if (props instanceof Object) {
@@ -161,14 +235,24 @@ function eXtended() {
         return el;
     }
 
-    function element(elementName = false) {
+    /**
+     * Get an element object
+     *
+     * elementName -> string
+     */
+    function element(elementName) {
         return _getElement(elementName);
     }
 
-    function render(target = false, ...elements) {
+    /**
+     * Render elements
+     *
+     * target      -> string
+     * ...elements -> array (spread operator)
+     */
+    function render(target, ...elements) {
         if (!target || elements.length === 0) {
             _log('You must specify a target and element to render');
-
             return;
         }
 
@@ -178,4 +262,4 @@ function eXtended() {
             el.appendChild(element);
         });
     }
-};
+}
