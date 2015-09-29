@@ -165,9 +165,7 @@ function Extended() {
         return properties[element];
     };
 
-    /**
-     * Exporting methods
-     */
+    // Exporting methods
     eX.create = create;
     eX.element = element;
     eX.render = render;
