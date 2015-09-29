@@ -33,7 +33,7 @@ function Extended() {
     /**
      * Validates if an item exists into an array or an object
      *
-     * item -> mixed
+     * item -> string
      * obj  -> array/object
      */
     let _isIn = (item, obj) => {
