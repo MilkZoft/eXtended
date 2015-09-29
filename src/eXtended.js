@@ -173,7 +173,7 @@ function Extended() {
     return eX;
 
     /**
-     * Creates a new element (id, class or tag)
+     * Creates a new element (with or without id & class)
      *
      * tag         -> string
      * props (*)   -> object/string
