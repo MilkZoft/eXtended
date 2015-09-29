@@ -4,6 +4,7 @@ var eX = new Extended();
 
 function Extended() {
     let eX = this;
+    const SPECIAL_TAGS = ['link', 'script'];
 
     /**
      * Logs a message
@@ -112,14 +113,14 @@ function Extended() {
         // Returns the id and class values for an element
         let getIdAndClassValues = (hasId, hasClasses, element) => {
             if (hasId.length > 1 && hasClasses.length >= 1) {
-                element = __getElementObject(
+                element = getElementObject(
                     element,
                     hasId[0],
                     hasId[1].substring(0, hasId[1].indexOf('.')),
                     hasClasses
                 );
             } else if (hasId.length === 2 || hasClasses.length >= 1) {
-                element = __getElementObject(
+                element = getElementObject(
                     element,
                     hasId.length === 2 ? hasId[0] : name,
                     hasId.length === 2 ? hasId[1] : false,
@@ -165,6 +166,20 @@ function Extended() {
         return properties[element];
     };
 
+    /**
+     * Validates if a given tag is a special tag
+     *
+     * tag -> string
+     * props -> object
+     */
+    let _isSpecialTag = (tag, props) => {
+        if (_isIn(tag, SPECIAL_TAGS) && props) {
+             props = _getDefaultAttrs(tag, props);
+        }
+
+        return props;
+    };
+
     // Exporting methods
     eX.create = create;
     eX.element = element;
@@ -185,7 +200,6 @@ function Extended() {
         let value;
         let property;
         let type;
-        let specialTags = ['link', 'script'];
 
         // Get properties for class or id and default attributes
         let getProps = (element, props) => {
@@ -201,9 +215,7 @@ function Extended() {
                 props.class = element.class;
             }
 
-            if (_isIn(tag, specialTags) && props) {
-                props = _getDefaultAttrs(tag, props);
-            }
+            props = _isSpecialTag(tag, props);
 
             return props;
         };
