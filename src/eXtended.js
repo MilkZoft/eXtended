@@ -1,15 +1,19 @@
 'use strict';
 
+// Creating instance
 var eX = new Extended();
 
 function Extended() {
+    // Setting scope to eX object
     let eX = this;
+
+    // Constants
     const SPECIAL_TAGS = ['link', 'script'];
 
     /**
      * Logs a message
      *
-     * message -> string
+     * message: string
      */
     let _log = (message) => {
         console.log('eXtended:', message);
@@ -18,8 +22,8 @@ function Extended() {
     /**
      * Easy way to iterate over arrays and objects
      *
-     * items    -> array/object
-     * callback -> function
+     * items: array/object
+     * callback: function
      */
     let _forEach = (items, callback) => {
         if (items instanceof Array) {
@@ -34,8 +38,8 @@ function Extended() {
     /**
      * Validates if an item exists into an array or an object
      *
-     * item -> string
-     * obj  -> array/object
+     * item: string
+     * obj: array/object
      */
     let _isIn = (item, obj) => {
         if (obj instanceof Array) {
@@ -48,7 +52,7 @@ function Extended() {
     /**
      * Short cuts for some properties
      *
-     * property -> string
+     * property: string
      */
     let _getProperty = (property) => {
         let properties = {
@@ -64,8 +68,8 @@ function Extended() {
     /**
      * Return an element object depends on type (id, class or tag)
      *
-     * elementName    -> string
-     * returnType (*) -> boolean
+     * elementName: string
+     * returnType (*): boolean
      */
     let _getElement = (elementName, returnType = false) => {
         let type = elementName[0];
@@ -82,16 +86,16 @@ function Extended() {
     /**
      * Return the type of the element (id, class or tag)
      *
-     * elementName -> string
+     * elementName: string
      */
     let _getElementType = (elementName) => {
         return _getElement(elementName, true);
     };
 
     /**
-     * Return the type of the element (id, class or tag)
+     * Return the type and name of the element (id, class or tag)
      *
-     * elementName -> string
+     * tag: string
      */
     let _getElementNameAndType = (tag) => {
         let hasId = tag.split('#');
@@ -137,7 +141,7 @@ function Extended() {
     /**
      * Creates a new element
      *
-     * element -> string
+     * element: string
      */
     let _newElement = (element) => {
         return document.createElement(element);
@@ -146,8 +150,8 @@ function Extended() {
     /**
      * Get default attributes for special tags (like link or script)
      *
-     * element -> string
-     * url (*) -> string
+     * element: string
+     * url (*): string
      */
     let _getDefaultAttrs = (element, url = false) => {
         let properties = {
@@ -169,8 +173,8 @@ function Extended() {
     /**
      * Validates if a given tag is a special tag
      *
-     * tag -> string
-     * props -> object
+     * tag: string
+     * props: object
      */
     let _isSpecialTag = (tag, props) => {
         if (_isIn(tag, SPECIAL_TAGS) && props) {
@@ -190,9 +194,9 @@ function Extended() {
     /**
      * Creates a new element (with or without id & class)
      *
-     * tag         -> string
-     * props (*)   -> object/string
-     * content (*) -> string
+     * tag: string
+     * props (*): object/string
+     * content (*): string
      */
     function create(tag, props = false, content = false) {
         let element = _getElementNameAndType(tag);
@@ -247,7 +251,7 @@ function Extended() {
     /**
      * Get an element object
      *
-     * elementName -> string
+     * elementName: string
      */
     function element(elementName) {
         return _getElement(elementName);
@@ -256,8 +260,8 @@ function Extended() {
     /**
      * Render elements
      *
-     * target      -> string
-     * ...elements -> array (spread operator)
+     * target: string
+     * elements: ...array
      */
     function render(target, ...elements) {
         if (!target || elements.length === 0) {
