@@ -1,25 +1,22 @@
 'use strict';
 
 function Utils() {
-  // Scoping
-  let utils = this;
-
   // Constants
   const SPECIAL_TAGS = ['link', 'script'];
 
   // Methods
-  utils.log = log;
-  utils.forEach = forEach;
-  utils.isIn = isIn;
-  utils.getProperty = getProperty;
-  utils.getElement = getElement;
-  utils.getElementType = getElementType;
-  utils.getElementNameAndType = getElementNameAndType;
-  utils.newElement = newElement;
-  utils.getDefaultAttrs = getDefaultAttrs;
-  utils.isSpecialTag = isSpecialTag;
+  this.log = log;
+  this.forEach = forEach;
+  this.isIn = isIn;
+  this.getProperty = getProperty;
+  this.getElement = getElement;
+  this.getElementType = getElementType;
+  this.getElementNameAndType = getElementNameAndType;
+  this.newElement = newElement;
+  this.getDefaultAttrs = getDefaultAttrs;
+  this.isSpecialTag = isSpecialTag;
 
-  return utils;
+  return this;
 
   /**
    * Logs a message.
@@ -100,7 +97,7 @@ function Utils() {
       '#': 'id'
     };
 
-    return !getType ? query : utils.isIn(type, types) ? types[type] : 'tag';
+    return !getType ? query : this.isIn(type, types) ? types[type] : 'tag';
   };
 
   /**
@@ -111,7 +108,7 @@ function Utils() {
    * @protected
    */
   function getElementType(elementName) {
-    return utils.getElement(elementName, true);
+    return this.getElement(elementName, true);
   };
 
   /**
@@ -207,8 +204,8 @@ function Utils() {
    * @protected
    */
   function isSpecialTag(tag, props) {
-    if (utils.isIn(tag, SPECIAL_TAGS) && props) {
-      props = utils.getDefaultAttrs(tag, props);
+    if (this.isIn(tag, SPECIAL_TAGS) && props) {
+      props = this.getDefaultAttrs(tag, props);
     }
 
     return props;
