@@ -3,7 +3,7 @@
 var elements = require('./elements');
 
 function Extended() {
-  // Methods
+  // Methods from elements
   this.create = elements.create;
   this.element = elements.element;
   this.render = elements.render;

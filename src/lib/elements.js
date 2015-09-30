@@ -1,6 +1,6 @@
 'use strict';
 
-var utils = require('./utils');
+let utils = require('./utils');
 
 function Elements() {
   // Methods
