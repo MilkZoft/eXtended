@@ -12,8 +12,7 @@
     "browserify": "latest",
     "eslint": "latest",
     "gulp": "latest",
-    "gulp-jscs": "latest",
-    "gulp-jshint": "latest",
+    "gulp-watch": "latest",
     "vinyl-source-stream": "latest"
   }
 }
