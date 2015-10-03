@@ -58,7 +58,6 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    let tags;
     let match;
 
     if (this.isString(element) && getRegexMatch(element, getRegex('directive'))) {
@@ -325,7 +324,7 @@ function Utils() {
           element,
           hasId.length === 2 ? hasId[0] : name,
           hasId.length === 2 ? hasId[1] : false,
-          hasId.length === 2 ? false    : hasClasses
+          hasId.length === 2 ? false : hasClasses
         );
       }
 
