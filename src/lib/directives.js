@@ -3,8 +3,6 @@
 let utils = require('./utils');
 
 function Directives() {
-  let directives = {};
-
   // Methods
   this.createDirective = createDirective;
 
