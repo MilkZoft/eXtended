@@ -21,11 +21,16 @@
   eX.render('head', link, script);
   eX.render('body', h1, input, span, p);
 
-  var CheckLink = eX.createDirective({
+  var linkTemplate = require('./templates/link.html');
+
+  eX.createDirective('CheckLink', {
     render: function() {
-      return '<a href="{{ this.props.$url }}">{{this.props.$content}}</a>';
+      return linkTemplate;
     }
   });
 
-  eX.render('#directive', '<CheckLink $url="/checked.html" $other="yes">Click here!</CheckLink>', CheckLink);
+  eX.render('#directive', '<CheckLink />', {
+    $url: 'http://www.codejobs.biz',
+    $content: 'Hello World'
+  });
 })();

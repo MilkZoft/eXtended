@@ -1,6 +1,7 @@
 'use strict';
 
 let utils = require('./utils');
+let directives = require('./directives');
 
 function Elements() {
   // Methods
@@ -97,18 +98,28 @@ function Elements() {
     }
 
     let el = this.element(target);
-    let directive;
+    let directiveProps;
     let directiveClass;
     let html;
+    let properties = {};
 
-    if (utils.isDirective(elements[0]) && utils.isObject(elements[1])) {
-      directiveClass = elements[1];
-      directive = utils.getDirective(elements[0]);
-      html = utils.getCompiledHTML(directiveClass.render(), directive);
+    if (utils.isDirective(elements[0])) {
+      if (utils.isObject(elements[1])) {
+        properties = elements[1];
+      }
+
+      directiveProps = directives.getDirectiveProps(elements[0]);
+      directiveProps.props = utils.merge(directiveProps.props, properties);
+      directiveClass = directives.getDirective(directiveProps.props.$directiveName);
+      html = directives.getCompiledHTML(directiveClass.render(), directiveProps);
+      directives.removeDirective(directiveProps.props.$directiveName);
+
       el.innerHTML = html;
     } else {
       utils.forEach(elements, element => {
-        el.appendChild(element);
+        if (utils.isObject(element)) {
+          el.appendChild(element);
+        }
       });
     }
   }

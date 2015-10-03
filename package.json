@@ -13,6 +13,7 @@
     "eslint": "latest",
     "gulp": "latest",
     "gulp-watch": "latest",
+    "stringify": "latest",
     "vinyl-source-stream": "latest"
   }
 }
