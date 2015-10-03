@@ -3,29 +3,35 @@
 function Utils() {
   // Constants
   const SPECIAL_TAGS = ['link', 'script'];
-  const DIRECTIVE_REGEX = /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/;
-  const REMOVE_QUOTES_REGEX = /["']/g;
-  const CURLY_BRACKETS_REGEX = /\{\{(\s*?.*?)*?\}\}/g;
+  const REGEX = {
+    directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
+    selfClosingDirective: /<[^>]+?\/[ ]*>/,
+    removeQuotes: /["']/g,
+    curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g
+  };
 
   // Methods
-  this.log = log;
   this.forEach = forEach;
-  this.getProperty = getProperty;
-  this.getElement = getElement;
-  this.getElementType = getElementType;
-  this.getElementNameAndType = getElementNameAndType;
-  this.newElement = newElement;
   this.getDefaultAttrs = getDefaultAttrs;
-  this.getDirective = getDirective;
-  this.getCompiledHTML = getCompiledHTML;
-  this.isIn = isIn;
-  this.isSpecialTag = isSpecialTag;
-  this.isInitializedArray = isInitializedArray;
-  this.isString = isString;
+  this.getElement = getElement;
+  this.getElementNameAndType = getElementNameAndType;
+  this.getElementType = getElementType;
+  this.getProperty = getProperty;
+  this.getRegex = getRegex;
+  this.getRegexMatch = getRegexMatch;
   this.isArray = isArray;
-  this.isObject = isObject;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
+  this.isFunction = isFunction;
+  this.isIn = isIn;
+  this.isInitializedArray = isInitializedArray;
+  this.isObject = isObject;
+  this.isSelfClosingDirective = isSelfClosingDirective;
+  this.isSpecialTag = isSpecialTag;
+  this.isString = isString;
+  this.log = log;
+  this.merge = merge;
+  this.newElement = newElement;
 
   return this;
 
@@ -33,10 +39,15 @@ function Utils() {
    * Logs a message.
    *
    * @param {string} message
+   * @returns {void}
    * @internal
    */
   function log(message) {
     console.log('eXtended:', message);
+  }
+
+  function getRegex(regex) {
+    return REGEX[regex] || false;
   }
 
   /**
@@ -47,70 +58,33 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    return this.isString(element) && element.match(new RegExp(DIRECTIVE_REGEX));
-  }
+    let tags;
+    let match;
 
-  /**
-   * Returns true if an element is a directive
-   *
-   * @param {string} elements
-   * @returns {boolean} true if is a directive
-   * @protected
-   */
-  function getDirective(element) {
-    let directiveMatch = getRegexMatch(element, DIRECTIVE_REGEX);
-    let attributesSplit;
-    let attributes = {
-      $content: directiveMatch[4]
-    };
-    let values;
+    if (this.isString(element) && getRegexMatch(element, getRegex('directive'))) {
+      return true;
+    } else if (this.isString(element)) {
+      match = getRegexMatch(element, getRegex('selfClosingDirective'));
 
-    if (isDefined(directiveMatch[3])) {
-      attributes.rawAttributes = directiveMatch[3];
-      attributesSplit = directiveMatch[3].replace(REMOVE_QUOTES_REGEX, '').split(' ');
-
-      this.forEach(attributesSplit, attribute => {
-        values = attribute.split('=');
-
-        attributes[values[0]] = values[1];
-      });
+      if (match) {
+        return true;
+      }
     }
 
-    return {
-      props: attributes
-    };
+    return false;
   }
 
-  /**
-   * Get compiled HTML (with variables values)
-   *
-   * @param {string} html
-   * @param {object} directiveProps
-   * @returns {string} compiled HTML
-   * @protected
-   */
-  function getCompiledHTML(html, directiveProps) {
-    let variablesMatch = getRegexMatch(html, CURLY_BRACKETS_REGEX);
-    let variableName;
-    let propsStr;
-    let newVariable;
+  function isSelfClosingDirective(element) {
+    let match = getRegexMatch(element, getRegex('selfClosingDirective'));
+    let directiveName;
 
-    forEach(variablesMatch, variable => {
-      variableName = variable.replace('{{', '').replace('}}', '').trim();
-      propsStr = variableName.substring(0, 11);
+    if (match) {
+      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
 
-      if (variableName === 'this.props.attributes') {
-        html = html.replace(variable, directiveProps.props.rawAttributes);
-      } else if (propsStr === 'this.props.') {
-        newVariable = variableName.substring(11);
+      return directiveName;
+    }
 
-        if (isDefined(directiveProps.props[newVariable])) {
-          html = html.replace(variable, directiveProps.props[newVariable]);
-        }
-      }
-    });
-
-    return html;
+    return false;
   }
 
   /**
@@ -121,8 +95,8 @@ function Utils() {
    * @returns {array} matches
    * @protected
    */
-  function getRegexMatch(element, pattern) {
-    return element.match(new RegExp(pattern));
+  function getRegexMatch(element, regex) {
+    return element.match(new RegExp(regex));
   }
 
   /**
@@ -156,6 +130,17 @@ function Utils() {
    */
   function isObject(obj) {
     return obj instanceof Object && !isArray(obj);
+  }
+
+  /**
+   * Validates if a passed variable is function
+   *
+   * @param {function} func
+   * @returns {boolean} true if is function
+   * @protected
+   */
+  function isFunction(func) {
+    return typeof func === 'function';
   }
 
   /**
@@ -212,7 +197,29 @@ function Utils() {
     } else {
       Object.keys(items).forEach(callback);
     }
-  };
+  }
+
+  /**
+   * Easy way to merge two objects.
+   *
+   * @param {object} obj1
+   * @param {object} obj2
+   * @returns {object} merged obj1
+   * @protected
+   */
+  function merge(obj1, obj2) {
+    if (isFunction(Object.assign)) {
+      return Object.assign(obj1, obj2);
+    } else {
+      for (var key in obj2) {
+        if (obj2.hasOwnProperty(key)) {
+          obj1[key] = obj2[key];
+        }
+      }
+
+      return obj1;
+    }
+  }
 
   /**
    * Validates if an item exists into an array or an object.
