@@ -12,6 +12,7 @@
     "browserify": "latest",
     "eslint": "latest",
     "git-guppy": "latest",
+    "guppy-pre-commit": "latest",
     "gulp": "latest",
     "gulp-eslint": "latest",
     "gulp-watch": "latest",

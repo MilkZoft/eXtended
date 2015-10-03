@@ -342,7 +342,7 @@ function Utils() {
    * @protected
    */
   function newElement(element) {
-      return document.createElement(element);
+    return document.createElement(element);
   };
 
   /**
