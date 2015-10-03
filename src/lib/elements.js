@@ -97,10 +97,20 @@ function Elements() {
     }
 
     let el = this.element(target);
+    let directive;
+    let directiveClass;
+    let html;
 
-    utils.forEach(elements, element => {
-      el.appendChild(element);
-    });
+    if (utils.isDirective(elements[0]) && utils.isObject(elements[1])) {
+      directiveClass = elements[1];
+      directive = utils.getDirective(elements[0]);
+      html = utils.getCompiledHTML(directiveClass.render(), directive);
+      el.innerHTML = html;
+    } else {
+      utils.forEach(elements, element => {
+        el.appendChild(element);
+      });
+    }
   }
 };
 
