@@ -1,10 +1,13 @@
 {
+  "env": {
+    "es6": true
+  },
   "rules": {
     "eqeqeq": 0,
     "strict": 0,
     "accessor-pairs": 0,
     "brace-style": [2, 1tbs],
-    "comma-dangle": [2, always-multiline],
+    "comma-dangle": [2, never],
     "consistent-return": 2,
     "dot-location": [2, property],
     "dot-notation": 2,
@@ -15,7 +18,6 @@
     "no-dupe-class-members": 2,
     "no-multi-spaces": 2,
     "no-restricted-syntax": [2, WithStatement],
-    "no-shadow": 2,
     "no-unused-expressions": 2,
     "no-unused-vars": [2, {args: none}],
     "quotes": [2, single, avoid-escape],

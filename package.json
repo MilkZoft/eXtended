@@ -11,7 +11,10 @@
     "babelify": "latest",
     "browserify": "latest",
     "eslint": "latest",
+    "git-guppy": "latest",
+    "guppy-pre-commit": "latest",
     "gulp": "latest",
+    "gulp-eslint": "latest",
     "gulp-watch": "latest",
     "stringify": "latest",
     "vinyl-source-stream": "latest"

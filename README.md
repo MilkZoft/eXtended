@@ -12,6 +12,22 @@ Clone the repository in some Apache or NGinx server.
 
 `git clone https://github.com/MilkZoft/eXtended.git`
 
+Go to eXtended folder:
+
+`cd eXtended`
+
+Install global dependencies:
+
+`npm install -g gulp guppy-cli`
+
+And then run:
+
+`guppy pre-commit`
+
+Install local dependencies:
+
+`npm install`
+
 Open the demo file at (<http://localhost/eXtended/examples/index.html>) using Mozilla Firefox 42 or some other browser that supports ECMAScript 6.
 
 ## Collaboration
