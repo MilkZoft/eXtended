@@ -3,18 +3,29 @@
 function Utils() {
   // Constants
   const SPECIAL_TAGS = ['link', 'script'];
+  const DIRECTIVE_REGEX = /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/;
+  const REMOVE_QUOTES_REGEX = /["']/g;
+  const CURLY_BRACKETS_REGEX = /\{\{(\s*?.*?)*?\}\}/g;
 
   // Methods
   this.log = log;
   this.forEach = forEach;
-  this.isIn = isIn;
   this.getProperty = getProperty;
   this.getElement = getElement;
   this.getElementType = getElementType;
   this.getElementNameAndType = getElementNameAndType;
   this.newElement = newElement;
   this.getDefaultAttrs = getDefaultAttrs;
+  this.getDirective = getDirective;
+  this.getCompiledHTML = getCompiledHTML;
+  this.isIn = isIn;
   this.isSpecialTag = isSpecialTag;
+  this.isInitializedArray = isInitializedArray;
+  this.isString = isString;
+  this.isArray = isArray;
+  this.isObject = isObject;
+  this.isDefined = isDefined;
+  this.isDirective = isDirective;
 
   return this;
 
@@ -26,7 +37,163 @@ function Utils() {
    */
   function log(message) {
     console.log('eXtended:', message);
-  };
+  }
+
+  /**
+   * Returns true if an element is a directive
+   *
+   * @param {string} elements
+   * @returns {boolean} true if is a directive
+   * @protected
+   */
+  function isDirective(element) {
+    return this.isString(element) && element.match(new RegExp(DIRECTIVE_REGEX));
+  }
+
+  /**
+   * Returns true if an element is a directive
+   *
+   * @param {string} elements
+   * @returns {boolean} true if is a directive
+   * @protected
+   */
+  function getDirective(element) {
+    let directiveMatch = getRegexMatch(element, DIRECTIVE_REGEX);
+    let attributesSplit;
+    let attributes = {
+      $content: directiveMatch[4]
+    };
+    let values;
+
+    if (isDefined(directiveMatch[3])) {
+      attributes.rawAttributes = directiveMatch[3];
+      attributesSplit = directiveMatch[3].replace(REMOVE_QUOTES_REGEX, '').split(' ');
+
+      this.forEach(attributesSplit, attribute => {
+        values = attribute.split('=');
+
+        attributes[values[0]] = values[1];
+      });
+    }
+
+    return {
+      props: attributes
+    };
+  }
+
+  /**
+   * Get compiled HTML (with variables values)
+   *
+   * @param {string} html
+   * @param {object} directiveProps
+   * @returns {string} compiled HTML
+   * @protected
+   */
+  function getCompiledHTML(html, directiveProps) {
+    let variablesMatch = getRegexMatch(html, CURLY_BRACKETS_REGEX);
+    let variableName;
+    let propsStr;
+    let newVariable;
+
+    forEach(variablesMatch, variable => {
+      variableName = variable.replace('{{', '').replace('}}', '').trim();
+      propsStr = variableName.substring(0, 11);
+
+      if (variableName === 'this.props.attributes') {
+        html = html.replace(variable, directiveProps.props.rawAttributes);
+      } else if (propsStr === 'this.props.') {
+        newVariable = variableName.substring(11);
+
+        if (isDefined(directiveProps.props[newVariable])) {
+          html = html.replace(variable, directiveProps.props[newVariable]);
+        }
+      }
+    });
+
+    return html;
+  }
+
+  /**
+   * Get match from passed regular expression.
+   *
+   * @param {string} element
+   * @param {regex} pattern
+   * @returns {array} matches
+   * @protected
+   */
+  function getRegexMatch(element, pattern) {
+    return element.match(new RegExp(pattern));
+  }
+
+  /**
+   * Validates if a value is String
+   *
+   * @param {string} value
+   * @returns {boolean} true if is String
+   * @protected
+   */
+  function isString(value) {
+    return typeof value === 'string';
+  }
+
+  /**
+   * Validates if a passed variable is an array
+   *
+   * @param {array} array
+   * @returns {boolean} true if is Array
+   * @protected
+   */
+  function isArray(array) {
+    return array instanceof Array;
+  }
+
+  /**
+   * Validates if a passed variable is an object
+   *
+   * @param {object} obj
+   * @returns {boolean} true if is Object
+   * @protected
+   */
+  function isObject(obj) {
+    return obj instanceof Object && !isArray(obj);
+  }
+
+  /**
+   * Validates if a passed array is initialized
+   *
+   * @param {array} items
+   * @returns {boolean} true if the first position is defined
+   * @protected
+   */
+  function isInitializedArray(items) {
+    return isDefined(items[0]);
+  }
+
+  /**
+   * Convert a Collection to an Array
+   *
+   * @param {collection} collection
+   * @returns {array} new array or same array
+   * @protected
+   */
+  function convertCollectionToArray(collection) {
+    if (isInitializedArray(collection)) {
+      return [].slice.call(collection);
+    }
+
+    return collection;
+  }
+
+  /**
+   * Validates if a passed value is defined
+   *
+   * @param {mixed} value
+   * @returns {boolean} true if is defined
+   * @protected
+   */
+  function isDefined(value) {
+    return typeof value !== 'undefined';
+  }
 
   /**
    * Easy way to iterate over arrays and objects.
@@ -36,7 +203,9 @@ function Utils() {
    * @protected
    */
   function forEach(items, callback) {
-    if (items instanceof Array) {
+    items = convertCollectionToArray(items);
+
+    if (isArray(items)) {
       for (let i = 0; i < items.length; i++) {
         callback(items[i]);
       }
@@ -50,7 +219,7 @@ function Utils() {
    *
    * @param {string} item
    * @param {array || object} obj
-   * @return {boolean} true if the item exists, false if not.
+   * @returns {boolean} true if the item exists, false if not.
    * @protected
    */
   function isIn(item, obj) {
@@ -65,7 +234,7 @@ function Utils() {
    * Short cuts for some properties
    *
    * @param {string} property
-   * @return {string} element property.
+   * @returns {string} element property.
    * @protected
    */
   function getProperty(property) {
@@ -84,7 +253,7 @@ function Utils() {
    *
    * @param {string} elementName
    * @param {boolean} getType = false
-   * @return {object} element object depends on type
+   * @returns {object} element object depends on type
    * @protected
    */
   function getElement(elementName, getType = false) {
@@ -104,7 +273,7 @@ function Utils() {
    * Return the type of the element (id, class or tag)
    *
    * @param {string} elementName
-   * @return {string} type of the element (id, class or tag)
+   * @returns {string} type of the element (id, class or tag)
    * @protected
    */
   function getElementType(elementName) {
@@ -115,7 +284,7 @@ function Utils() {
    * Return the type and name of the element (id, class or tag).
    *
    * @param {string} tag
-   * @return {object} element with properties.
+   * @returns {object} element with properties.
    * @protected
    */
   function getElementNameAndType(tag) {
@@ -163,7 +332,7 @@ function Utils() {
    * Creates a new element
    *
    * @param {string} element
-   * @return {object} new element
+   * @returns {object} new element
    * @protected
    */
   function newElement(element) {
@@ -175,7 +344,7 @@ function Utils() {
    *
    * @param {string} element
    * @param {string} url
-   * @return {object} default properties
+   * @returns {object} default properties
    * @protected
    */
   function getDefaultAttrs(element, url) {
@@ -200,7 +369,7 @@ function Utils() {
    *
    * @param {string} tag
    * @param {object} props
-   * @return {object} props with default attributes.
+   * @returns {object} props with default attributes.
    * @protected
    */
   function isSpecialTag(tag, props) {

@@ -4,12 +4,12 @@
   var eX = require('./../../src/eXtended');
 
   var h1 = eX.create('h1#myId.myClass', {
-      text: 'Hello World!'
+    text: 'Hello World!'
   });
 
   var input = eX.create('input', {
-      name: 'user',
-      value: 'Username'
+    name: 'user',
+    value: 'Username'
   });
 
   var span = eX.create('span', '.username', 'Write your username');
@@ -20,4 +20,12 @@
 
   eX.render('head', link, script);
   eX.render('body', h1, input, span, p);
+
+  var CheckLink = eX.createDirective({
+    render: function() {
+      return '<a href="{{ this.props.$url }}">{{this.props.$content}}</a>';
+    }
+  });
+
+  eX.render('#directive', '<CheckLink $url="/checked.html" $other="yes">Click here!</CheckLink>', CheckLink);
 })();
