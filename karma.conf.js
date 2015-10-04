@@ -3,7 +3,7 @@
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '.',
+    basePath: './src',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -17,9 +17,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*Test.js',
-      {pattern:'src/**/*.js', included: false, load: false},
-      {pattern:'test/**/*Test.js', included: false, load: false},
+      '../test/**/*Test.js',
+      {pattern: '**/*.js', included: false, load: false},
+      {pattern: '../test/**/*Test.js', included: false, load: false},
     ],
 
     // list of files to exclude
@@ -30,7 +30,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*Test.js': ['browserify']
+      '../test/**/*Test.js': ['browserify']
     },
 
     // test results reporter to use

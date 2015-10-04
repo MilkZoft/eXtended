@@ -31,17 +31,45 @@ function Directives() {
   }
 
   /**
-   * Save a new directive
+   * Get all existing directives
    *
-   * @param {string} directive
-   * @param {object} obj
-   * @returns {obj} directive object
+   * @returns {obj} directives object
    * @public
    */
-  function setDirective(directive, obj) {
-    if (!utils.isDefined(directives[directive])) {
-      directives[directive] = obj;
-    }
+  function getAllDirectives() {
+    return directives;
+  }
+
+  /**
+   * Get compiled HTML (with variables values)
+   *
+   * @param {string} html
+   * @param {object} directiveProps
+   * @returns {string} compiled HTML
+   * @protected
+   */
+  function getCompiledHTML(html, directiveProps) {
+    var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
+    var variableName;
+    var propsStr;
+    var newVariable;
+
+    utils.forEach(variablesMatch, variable => {
+      variableName = variable.replace('{{', '').replace('}}', '').trim();
+      propsStr = variableName.substring(0, 11);
+
+      if (variableName === 'this.props.attributes') {
+        html = html.replace(variable, directiveProps.props.rawAttributes);
+      } else if (propsStr === 'this.props.') {
+        newVariable = variableName.substring(11);
+
+        if (utils.isDefined(directiveProps.props[newVariable])) {
+          html = html.replace(variable, directiveProps.props[newVariable]);
+        }
+      }
+    });
+
+    return html;
   }
 
   /**
@@ -53,28 +81,6 @@ function Directives() {
    */
   function getDirective(directive) {
     return utils.isDefined(directives[directive]) ? directives[directive] : {};
-  }
-
-  /**
-   * Get all existing directives
-   *
-   * @returns {obj} directives object
-   * @public
-   */
-  function getAllDirectives() {
-    return directives;
-  }
-
-  /**
-   * Get all existing directives
-   *
-   * @returns {obj} directives object
-   * @public
-   */
-  function removeDirective(directive) {
-    if (utils.isDefined(directives[directive])) {
-      delete directives[directive];
-    }
   }
 
   /**
@@ -116,35 +122,29 @@ function Directives() {
   }
 
   /**
-   * Get compiled HTML (with variables values)
+   * Save a new directive
    *
-   * @param {string} html
-   * @param {object} directiveProps
-   * @returns {string} compiled HTML
-   * @protected
+   * @param {string} directive
+   * @param {object} obj
+   * @returns {obj} directive object
+   * @public
    */
-  function getCompiledHTML(html, directiveProps) {
-    var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
-    var variableName;
-    var propsStr;
-    var newVariable;
+  function setDirective(directive, obj) {
+    if (!utils.isDefined(directives[directive])) {
+      directives[directive] = obj;
+    }
+  }
 
-    utils.forEach(variablesMatch, variable => {
-      variableName = variable.replace('{{', '').replace('}}', '').trim();
-      propsStr = variableName.substring(0, 11);
-
-      if (variableName === 'this.props.attributes') {
-        html = html.replace(variable, directiveProps.props.rawAttributes);
-      } else if (propsStr === 'this.props.') {
-        newVariable = variableName.substring(11);
-
-        if (utils.isDefined(directiveProps.props[newVariable])) {
-          html = html.replace(variable, directiveProps.props[newVariable]);
-        }
-      }
-    });
-
-    return html;
+  /**
+   * Get all existing directives
+   *
+   * @returns {obj} directives object
+   * @public
+   */
+  function removeDirective(directive) {
+    if (utils.isDefined(directives[directive])) {
+      delete directives[directive];
+    }
   }
 };
 
