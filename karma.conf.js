@@ -7,7 +7,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'browserify'],
+    frameworks: ['mocha', 'chai', 'sinon', 'browserify'],
 
     browserify: {
       debug: true,
