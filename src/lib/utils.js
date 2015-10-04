@@ -11,7 +11,6 @@ function Utils() {
   };
 
   // Methods
-  this.convertCollectionToArray = convertCollectionToArray;
   this.forEach = forEach;
   this.getDefaultAttrs = getDefaultAttrs;
   this.getElement = getElement;
@@ -37,21 +36,6 @@ function Utils() {
   return this;
 
   /**
-   * Convert a Collection to an Array
-   *
-   * @param {collection} collection
-   * @returns {array} new array or same array
-   * @protected
-   */
-  function convertCollectionToArray(collection) {
-    if (isInitializedArray(collection)) {
-      return [].slice.call(collection);
-    }
-
-    return collection;
-  }
-
-  /**
    * Easy way to iterate over arrays and objects.
    *
    * @param {array || object} items
@@ -59,8 +43,6 @@ function Utils() {
    * @protected
    */
   function forEach(items, callback) {
-    items = convertCollectionToArray(items);
-
     if (isArray(items)) {
       for (var i = 0; i < items.length; i++) {
         callback(items[i]);
@@ -92,7 +74,7 @@ function Utils() {
       }
     };
 
-    return properties[element];
+    return properties[element] || {};
   }
 
   /**
