@@ -23,6 +23,7 @@ Install global dependencies:
 And then run:
 
 `guppy pre-commit`
+`guppy pre-push`
 
 Install local dependencies:
 

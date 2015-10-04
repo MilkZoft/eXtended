@@ -3,6 +3,7 @@ var gulp = require('gulp');
 // Tasks
 gulp.task('browserify', require('./gulp/browserify'));
 gulp.task('lint', require('./gulp/eslint'));
+gulp.task('karma', require('./gulp/karma'));
 
 // Watch
 gulp.task('watch', function() {
@@ -12,7 +13,9 @@ gulp.task('watch', function() {
 
 // Git hooks
 gulp.task('pre-commit', ['lint']);
+gulp.task('pre-push', ['test']);
 
 // Specific Tasks
+gulp.task('test', ['karma'])
 gulp.task('build', ['browserify']);
 gulp.task('default', ['build']);

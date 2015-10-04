@@ -1,7 +1,7 @@
 'use strict';
 
-let utils = require('./utils');
-let directives = require('./directives');
+var utils = require('./utils');
+var directives = require('./directives');
 
 function Elements() {
   // Methods
@@ -21,14 +21,14 @@ function Elements() {
    * @public
    */
   function create(tag, props, content) {
-    let element = utils.getElementNameAndType(tag);
-    let el = utils.newElement(element.name);
-    let value;
-    let property;
-    let type;
+    var element = utils.getElementNameAndType(tag);
+    var el = utils.newElement(element.name);
+    var value;
+    var property;
+    var type;
 
     // Get properties for class or id and default attributes
-    let getProps = (element, props) => {
+    var getProps = (element, props) => {
       if (element.id || element.class) {
         props = !props ? {} : props;
       }
@@ -47,7 +47,7 @@ function Elements() {
     };
 
     // Builds the object
-    let buildElement = () => {
+    var buildElement = () => {
       props = getProps(element, props);
 
       if (content) {
@@ -97,11 +97,11 @@ function Elements() {
       return;
     }
 
-    let el = this.element(target);
-    let directiveProps;
-    let directiveClass;
-    let html;
-    let properties = {};
+    var el = this.element(target);
+    var directiveProps;
+    var directiveClass;
+    var html;
+    var properties = {};
 
     if (utils.isDirective(elements[0])) {
       if (utils.isObject(elements[1])) {

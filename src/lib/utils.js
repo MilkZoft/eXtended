@@ -58,7 +58,7 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    let match;
+    var match;
 
     if (this.isString(element) && getRegexMatch(element, getRegex('directive'))) {
       return true;
@@ -74,8 +74,8 @@ function Utils() {
   }
 
   function isSelfClosingDirective(element) {
-    let match = getRegexMatch(element, getRegex('selfClosingDirective'));
-    let directiveName;
+    var match = getRegexMatch(element, getRegex('selfClosingDirective'));
+    var directiveName;
 
     if (match) {
       directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
@@ -190,7 +190,7 @@ function Utils() {
     items = convertCollectionToArray(items);
 
     if (isArray(items)) {
-      for (let i = 0; i < items.length; i++) {
+      for (var i = 0; i < items.length; i++) {
         callback(items[i]);
       }
     } else {
@@ -244,7 +244,7 @@ function Utils() {
    * @protected
    */
   function getProperty(property) {
-    let properties = {
+    var properties = {
       'class': 'className',
       'tag': 'className',
       'text': 'innerHTML',
@@ -263,11 +263,11 @@ function Utils() {
    * @protected
    */
   function getElement(elementName, getType = false) {
-    let type = elementName[0];
-    let query = type === '.' ?
+    var type = elementName[0];
+    var query = type === '.' ?
                   document.querySelectorAll(elementName) :
                   document.querySelector(elementName);
-    let types = {
+    var types = {
       '.': 'class',
       '#': 'id'
     };
@@ -294,15 +294,15 @@ function Utils() {
    * @protected
    */
   function getElementNameAndType(tag) {
-    let hasId = tag.split('#');
-    let hasClasses = tag.split('.');
-    let name = hasClasses.shift();
-    let element = {
+    var hasId = tag.split('#');
+    var hasClasses = tag.split('.');
+    var name = hasClasses.shift();
+    var element = {
       name: tag
     };
 
     // Returns the object element with the name, id and class
-    let getElementObject = (element, name, id, hasClass) => {
+    var getElementObject = (element, name, id, hasClass) => {
       element.name = name;
       element.id = id;
       element.class = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
@@ -311,7 +311,7 @@ function Utils() {
     };
 
     // Returns the id and class values for an element
-    let getIdAndClassValues = (hasId, hasClasses, element) => {
+    var getIdAndClassValues = (hasId, hasClasses, element) => {
       if (hasId.length > 1 && hasClasses.length >= 1) {
         element = getElementObject(
           element,
@@ -354,7 +354,7 @@ function Utils() {
    * @protected
    */
   function getDefaultAttrs(element, url) {
-    let properties = {
+    var properties = {
       link: {
         rel: 'stylesheet',
         type: 'text/css',

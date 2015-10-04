@@ -1,10 +1,10 @@
 'use strict';
 
-let utils = require('./utils');
+var utils = require('./utils');
 
 function Directives() {
   // Properties
-  let directives = {};
+  var directives = {};
 
   // Methods
   this.createDirective = createDirective;
@@ -85,11 +85,11 @@ function Directives() {
    * @protected
    */
   function getDirectiveProps(element) {
-    let attributes = {};
-    let attributesSplit;
-    let directiveMatch;
-    let selfClosingDirective = utils.isSelfClosingDirective(element);
-    let values;
+    var attributes = {};
+    var attributesSplit;
+    var directiveMatch;
+    var selfClosingDirective = utils.isSelfClosingDirective(element);
+    var values;
 
     directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, getRegex('directive')) : [];
 
@@ -124,10 +124,10 @@ function Directives() {
    * @protected
    */
   function getCompiledHTML(html, directiveProps) {
-    let variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
-    let variableName;
-    let propsStr;
-    let newVariable;
+    var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
+    var variableName;
+    var propsStr;
+    var newVariable;
 
     utils.forEach(variablesMatch, variable => {
       variableName = variable.replace('{{', '').replace('}}', '').trim();
