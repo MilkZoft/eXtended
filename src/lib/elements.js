@@ -34,6 +34,8 @@ function Elements() {
 
     // Get properties for class or id and default attributes
     var getProps = (element, props) => {
+      var newProps = utils.isSpecialTag(tag, props);
+
       if (element.id || element.class) {
         props = !props ? {} : props;
       }
@@ -46,9 +48,7 @@ function Elements() {
         props.class = element.class;
       }
 
-      props = utils.isSpecialTag(tag, props);
-
-      return props;
+      return newProps ? utils.merge(props, newProps) : props;
     };
 
     // Builds the object
@@ -105,7 +105,7 @@ function Elements() {
       '#': 'id'
     };
 
-    return !getType ? query : utils.isIn(type, types) ? types[type] : 'tag';
+    return !getType ? query : utils.inObject(type, types) ? types[type] : 'tag';
   }
 
   /**

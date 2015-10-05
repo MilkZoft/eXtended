@@ -3,6 +3,10 @@
 var utils = require('../../src/lib/utils');
 
 describe('Utils', () => {
+  var directiveWithAttributes = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
+  var selfClosingDirective = '<TestDirective />';
+  var invalidDirective = '<TestDirective>';
+
   describe('#forEach', () => {
     it('should be a function', () => {
       assert.typeOf(utils.forEach, 'function', 'forEach should be a function');
@@ -74,27 +78,27 @@ describe('Utils', () => {
     });
 
     it('should return a regex for directive', () => {
-      var actualResult = utils.getRegex('directive');
+      var actualResult = !!utils.getRegex('directive');
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a directive regex');
+      assert.isTrue(actualResult, 'actualResult should be a directive regex');
     });
 
     it('should return a regex for selfClosingDirective', () => {
-      var actualResult = utils.getRegex('selfClosingDirective');
+      var actualResult = !!utils.getRegex('selfClosingDirective');
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a selfClosingDirective regex');
+      assert.isTrue(actualResult, 'actualResult should be a selfClosingDirective regex');
     });
 
     it('should return a regex for removeQuotes', () => {
-      var actualResult = utils.getRegex('removeQuotes');
+      var actualResult = !!utils.getRegex('removeQuotes');
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a removeQuotes regex');
+      assert.isTrue(actualResult, 'actualResult should be a removeQuotes regex');
     });
 
     it('should return a regex for curlyBrackets', () => {
-      var actualResult = utils.getRegex('curlyBrackets');
+      var actualResult = !!utils.getRegex('curlyBrackets');
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a curlyBrackets regex');
+      assert.isTrue(actualResult, 'actualResult should be a curlyBrackets regex');
     });
 
     it('should return false for unknown regex', () => {
@@ -110,19 +114,17 @@ describe('Utils', () => {
     });
 
     it('should validate if a given string is a self closing directive', () => {
-      var directive = '<TestDirective />';
       var regex = utils.getRegex('selfClosingDirective');
-      var actualResult = utils.getRegexMatch(directive, regex);
+      var actualResult = !!utils.getRegexMatch(selfClosingDirective, regex);
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a self closing directive');
+      assert.isTrue(actualResult, 'actualResult should be a self closing directive');
     });
 
     it('should validate if a given string is a directive with attributes', () => {
-      var directive = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
       var regex = utils.getRegex('directive');
-      var actualResult = utils.getRegexMatch(directive, regex);
+      var actualResult = !!utils.getRegexMatch(directiveWithAttributes, regex);
 
-      assert.isTrue(actualResult !== false, 'actualResult should be a directive with attributes');
+      assert.isTrue(actualResult, 'actualResult should be a directive with attributes');
     });
 
     it('should remove double quoutes in a string', () => {
@@ -139,6 +141,54 @@ describe('Utils', () => {
       var actualResult = textWithSingleQuotes.replace(utils.getRegex('removeQuotes'), '');
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+  });
+
+  describe('#inArray', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.inArray, 'function', 'inArray should be a function');
+    });
+
+    it('should validate if an item is in array', () => {
+      var array = ['foo', 'bar', 'zas'];
+      var actualResult = utils.inArray('bar', array);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if an item is not in array', () => {
+      var array = ['foo', 'bar', 'zas'];
+      var actualResult = utils.inArray('fuu', array);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
+    });
+  });
+
+  describe('#inObject', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.inObject, 'function', 'inObject should be a function');
+    });
+
+    it('should validate if an item is in object', () => {
+      var obj = {
+        foo: 1,
+        bar: 2,
+        zas: 3
+      };
+      var actualResult = utils.inObject('foo', obj);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if an item is not in object', () => {
+      var obj = {
+        foo: 1,
+        bar: 2,
+        zas: 3
+      };
+      var actualResult = utils.inObject('fuu', obj);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 
@@ -186,11 +236,39 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isDefined, 'function', 'isDefined should be a function');
     });
+
+    it('should validate if a variable is defined', () => {
+      var value = 'Foo';
+      assert.isTrue(utils.isDefined(value), 'value should be defined');
+    });
+
+    it('should validate if a variable is undefined', () => {
+      var value;
+      assert.isFalse(utils.isDefined(value), 'value should be undefined');
+    });
   });
 
   describe('#isDirective', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isDirective, 'function', 'isDirective should be a function');
+    });
+
+    it('should validate if a given string is a self closing directive', () => {
+      var actualResult = utils.isDirective(selfClosingDirective);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a given string is a directive with attributes', () => {
+      var actualResult = utils.isDirective(directiveWithAttributes);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a given string is not a valid directive', () => {
+      var actualResult = utils.isDirective(invalidDirective);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 
@@ -198,17 +276,59 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isFunction, 'function', 'isFunction should be a function');
     });
-  });
 
-  describe('#isIn', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.isIn, 'function', 'isIn should be a function');
+    it('should validate if a function is a Function', () => {
+      var func = () => {
+        return 'Foo';
+      };
+
+      assert.isTrue(utils.isFunction(func), 'func should be a function');
+    });
+
+    it('should validate if an array is not a Function', () => {
+      var value = [1, 2, 3];
+
+      assert.isFalse(utils.isFunction(value), '[1, 2, 3] should not be a function');
+    });
+
+    it('should validate if a string value is not a Function', () => {
+      var value = 'Foo';
+
+      assert.isFalse(utils.isFunction(value), 'Foo should not be Function');
+    });
+
+    it('should validate if a number value is not an Array', () => {
+      var value = 9999;
+
+      assert.isFalse(utils.isFunction(value), 'Number 9999 should not be Function');
+    });
+
+    it('should validate if an object is not a Function', () => {
+      var value = {
+        foo: 'bar'
+      };
+
+      assert.isFalse(utils.isFunction(value), 'Object should not be Function');
     });
   });
 
-  describe('#isInitializedArray', () => {
+  describe('#isNull', () => {
     it('should be a function', () => {
-      assert.typeOf(utils.isInitializedArray, 'function', 'isInitializedArray should be a function');
+      assert.typeOf(utils.isNull, 'function', 'isNull should be a function');
+    });
+
+    it('should validate if a value is null', () => {
+      var value = null;
+      var actualResult = utils.isNull(value);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a value is not null', () => {
+      var value;
+      var actualResult = utils.isNull(value);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 
@@ -216,17 +336,75 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isObject, 'function', 'isObject should be a function');
     });
+
+    it('should validate if an object is an Object', () => {
+      var obj = {
+        foo: 'bar'
+      };
+
+      assert.isTrue(utils.isObject(obj), 'obj should be an Object');
+    });
+
+    it('should validate if an array is not an Object', () => {
+      var value = [1, 2, 3];
+
+      assert.isFalse(utils.isObject(value), '[1, 2, 3] should not be an Object');
+    });
+
+    it('should validate if a string value is not an Object', () => {
+      var value = 'Foo';
+
+      assert.isFalse(utils.isObject(value), 'Foo should not be an Object');
+    });
+
+    it('should validate if a number value is not an Object', () => {
+      var value = 9999;
+
+      assert.isFalse(utils.isObject(value), 'Number 9999 should not be an Object');
+    });
+
+    it('should validate if a function is not an Object', () => {
+      var value = () => {
+        return 'Foo';
+      };
+
+      assert.isFalse(utils.isObject(value), 'Function should not be an Object');
+    });
   });
 
   describe('#isSelfClosingDirective', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isSelfClosingDirective, 'function', 'isSelfClosingDirective should be a function');
     });
+
+    it('should validate if a given string is a Self Closing Directive', () => {
+      var actualResult = !!utils.isSelfClosingDirective(selfClosingDirective);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a directive with attributes is not a Self Closing Directive', () => {
+      var actualResult = !!utils.isSelfClosingDirective(directiveWithAttributes);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
+    });
   });
 
   describe('#isSpecialTag', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isSpecialTag, 'function', 'isSpecialTag should be a function');
+    });
+
+    it('should validate if a link is a special tag', () => {
+      var actualResult = !!utils.isSpecialTag('link', 'style.css');
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a script is a special tag', () => {
+      var actualResult = !!utils.isSpecialTag('script', 'script.js');
+
+      assert.isTrue(actualResult, 'actualResult should be true');
     });
   });
 

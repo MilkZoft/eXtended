@@ -15,12 +15,13 @@ function Utils() {
   this.getDefaultAttrs = getDefaultAttrs;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
+  this.inArray = inArray;
+  this.inObject = inObject;
   this.isArray = isArray;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
   this.isFunction = isFunction;
-  this.isIn = isIn;
-  this.isInitializedArray = isInitializedArray;
+  this.isNull = isNull;
   this.isObject = isObject;
   this.isSelfClosingDirective = isSelfClosingDirective;
   this.isSpecialTag = isSpecialTag;
@@ -93,8 +94,32 @@ function Utils() {
    */
   function getRegexMatch(element, regex) {
     var match = element.match(new RegExp(regex));
-    console.log('$$$$$$$>>>>', element, regex.toString(), match);
-    return match === null ? false : match;
+
+    return !isNull(match) ? match : false;
+  }
+
+/**
+   * Validates if an item exists into an array.
+   *
+   * @param {string} item
+   * @param {array} obj
+   * @returns {boolean} true if the item exists, false if not.
+   * @protected
+   */
+  function inArray(item, array) {
+    return array instanceof Array && array.indexOf(item) >= 0;
+  }
+
+  /**
+   * Validates if an item exists into an object.
+   *
+   * @param {string} item
+   * @param {object} obj
+   * @returns {boolean} true if the item exists, false if not.
+   * @protected
+   */
+  function inObject(item, obj) {
+    return typeof obj[item] !== 'undefined';
   }
 
   /**
@@ -127,16 +152,10 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    var match;
-
     if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
       return true;
     } else if (isString(element)) {
-      match = getRegexMatch(element, getRegex('selfClosingDirective'));
-
-      if (match) {
-        return true;
-      }
+      return !!getRegexMatch(element, getRegex('selfClosingDirective'));
     }
 
     return false;
@@ -154,30 +173,14 @@ function Utils() {
   }
 
   /**
-   * Validates if an item exists into an array or an object.
+   * Validates if a passed value is null
    *
-   * @param {string} item
-   * @param {array || object} obj
-   * @returns {boolean} true if the item exists, false if not.
+   * @param {mixed} value
+   * @returns {boolean} true if is null
    * @protected
    */
-  function isIn(item, obj) {
-    if (obj instanceof Array) {
-      return obj.indexOf(item) >= 0;
-    } else {
-      return typeof obj[item] !== 'undefined';
-    }
-  }
-
-  /**
-   * Validates if a passed array is initialized
-   *
-   * @param {array} items
-   * @returns {boolean} true if the first position is defined
-   * @protected
-   */
-  function isInitializedArray(items) {
-    return isDefined(items[0]);
+  function isNull(value) {
+    return value === null;
   }
 
   /**
@@ -188,7 +191,7 @@ function Utils() {
    * @protected
    */
   function isObject(obj) {
-    return obj instanceof Object && !isArray(obj);
+    return obj instanceof Object && !isArray(obj) && typeof obj !== 'function';
   }
 
   /**
@@ -220,11 +223,11 @@ function Utils() {
    * @protected
    */
   function isSpecialTag(tag, props) {
-    if (isIn(tag, SPECIAL_TAGS) && props) {
-      props = getDefaultAttrs(tag, props);
+    if (inArray(tag, SPECIAL_TAGS) && props) {
+      return getDefaultAttrs(tag, props);
     }
 
-    return props;
+    return false;
   }
 
   /**

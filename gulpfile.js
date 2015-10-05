@@ -16,6 +16,7 @@ gulp.task('pre-commit', ['lint']);
 gulp.task('pre-push', ['test']);
 
 // Specific Tasks
-gulp.task('test', ['karma'])
+gulp.task('test', ['karma']);
+gulp.task('analyze', ['lint']);
 gulp.task('build', ['browserify']);
 gulp.task('default', ['build']);
