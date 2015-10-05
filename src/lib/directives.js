@@ -9,7 +9,6 @@ function Directives() {
   // Methods
   this.createDirective = createDirective;
   this.getAllDirectives = getAllDirectives;
-  this.getCompiledHTML = getCompiledHTML;
   this.getDirective = getDirective;
   this.getDirectiveProps = getDirectiveProps;
   this.removeDirective = removeDirective;
@@ -38,38 +37,6 @@ function Directives() {
    */
   function getAllDirectives() {
     return directives;
-  }
-
-  /**
-   * Get compiled HTML (with variables values)
-   *
-   * @param {string} html
-   * @param {object} directiveProps
-   * @returns {string} compiled HTML
-   * @protected
-   */
-  function getCompiledHTML(html, directiveProps) {
-    var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
-    var variableName;
-    var propsStr;
-    var newVariable;
-
-    utils.forEach(variablesMatch, variable => {
-      variableName = variable.replace('{{', '').replace('}}', '').trim();
-      propsStr = variableName.substring(0, 11);
-
-      if (variableName === 'this.props.attributes') {
-        html = html.replace(variable, directiveProps.props.rawAttributes);
-      } else if (propsStr === 'this.props.') {
-        newVariable = variableName.substring(11);
-
-        if (utils.isDefined(directiveProps.props[newVariable])) {
-          html = html.replace(variable, directiveProps.props[newVariable]);
-        }
-      }
-    });
-
-    return html;
   }
 
   /**
@@ -146,7 +113,7 @@ function Directives() {
       delete directives[directive];
     }
   }
-};
+}
 
 // Exporting object
 module.exports = new Directives();

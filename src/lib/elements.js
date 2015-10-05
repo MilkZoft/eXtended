@@ -2,6 +2,7 @@
 
 var utils = require('./utils');
 var directives = require('./directives');
+var templates = require('./templates');
 
 function Elements() {
   // Methods
@@ -222,7 +223,7 @@ function Elements() {
       directiveProps = directives.getDirectiveProps(elements[0]);
       directiveProps.props = utils.merge(directiveProps.props, properties);
       directiveClass = directives.getDirective(directiveProps.props.$directiveName);
-      html = directives.getCompiledHTML(directiveClass.render(), directiveProps);
+      html = templates.getCompiledHTML(directiveClass.render(), directiveProps);
       directives.removeDirective(directiveProps.props.$directiveName);
 
       el.innerHTML = html;
@@ -234,7 +235,7 @@ function Elements() {
       });
     }
   }
-};
+}
 
 // Exporting object
 module.exports = new Elements();

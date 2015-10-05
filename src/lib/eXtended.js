@@ -13,7 +13,7 @@ function Extended() {
   this.createDirective = directives.createDirective;
 
   return this;
-};
+}
 
 // Exporting object
 module.exports = new Extended();
