@@ -246,6 +246,11 @@ describe('Utils', () => {
       var value;
       assert.isFalse(utils.isDefined(value), 'value should be undefined');
     });
+
+    it('should validate if a variable is defined and is different than the second param', () => {
+      var value = 'isNotFoo';
+      assert.isTrue(utils.isDefined(value, 'isFoo'), 'value should not be isFoo');
+    });
   });
 
   describe('#isDirective', () => {

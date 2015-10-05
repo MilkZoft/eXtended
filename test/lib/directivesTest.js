@@ -15,12 +15,6 @@ describe('Directives', () => {
     });
   });
 
-  describe('#getCompiledHTML', () => {
-    it('should be a function', () => {
-      assert.typeOf(directives.getCompiledHTML, 'function', 'getCompiledHTML should be a function');
-    });
-  });
-
   describe('#getDirective', () => {
     it('should be a function', () => {
       assert.typeOf(directives.getDirective, 'function', 'getDirective should be a function');

@@ -137,11 +137,16 @@ function Utils() {
    * Validates if a passed value is defined
    *
    * @param {mixed} value
+   * @param {boolean} isNot
    * @returns {boolean} true if is defined
    * @protected
    */
-  function isDefined(value) {
-    return typeof value !== 'undefined';
+  function isDefined(value, isNot) {
+    if (typeof isNot === 'undefined') {
+      return typeof value !== 'undefined';
+    } else {
+      return typeof value !== 'undefined' && value !== isNot;
+    }
   }
 
   /**

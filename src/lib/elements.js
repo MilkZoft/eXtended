@@ -60,7 +60,7 @@ function Elements() {
         el.innerHTML = content;
       }
 
-      if (props instanceof Object) {
+      if (utils.isObject(props)) {
         utils.forEach(props, key => {
           value = props[key] || '';
           property = getProperty(key);
@@ -126,9 +126,20 @@ function Elements() {
 
     // Returns the object element with the name, id and class
     var getElementObject = (element, name, id, hasClass) => {
-      element.name = name;
-      element.id = id;
-      element.class = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
+      var className = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
+
+      if (utils.isDefined(name, false)) {
+        element.name = name;
+      }
+
+      if (utils.isDefined(id, false)) {
+        element.id = id;
+      }
+
+      if (utils.isDefined(className, false)) {
+        element.class = className;
+      }
+
       return element;
     };
 
