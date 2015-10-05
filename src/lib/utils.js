@@ -13,10 +13,6 @@ function Utils() {
   // Methods
   this.forEach = forEach;
   this.getDefaultAttrs = getDefaultAttrs;
-  this.getElement = getElement;
-  this.getElementNameAndType = getElementNameAndType;
-  this.getElementType = getElementType;
-  this.getProperty = getProperty;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
   this.isArray = isArray;
@@ -31,7 +27,6 @@ function Utils() {
   this.isString = isString;
   this.log = log;
   this.merge = merge;
-  this.newElement = newElement;
 
   return this;
 
@@ -78,102 +73,6 @@ function Utils() {
   }
 
   /**
-   * Return an element object depends on type (id, class or tag)
-   *
-   * @param {string} elementName
-   * @param {boolean} getType = false
-   * @returns {object} element object depends on type
-   * @protected
-   */
-  function getElement(elementName, getType = false) {
-    var type = elementName[0];
-    var query = type === '.' ? document.querySelectorAll(elementName) : document.querySelector(elementName);
-    var types = {
-      '.': 'class',
-      '#': 'id'
-    };
-
-    return !getType ? query : isIn(type, types) ? types[type] : 'tag';
-  }
-
-  /**
-   * Return the type and name of the element (id, class or tag).
-   *
-   * @param {string} tag
-   * @returns {object} element with properties.
-   * @protected
-   */
-  function getElementNameAndType(tag) {
-    var hasId = tag.split('#');
-    var hasClasses = tag.split('.');
-    var name = hasClasses.shift();
-    var element = {
-      name: tag
-    };
-
-    // Returns the object element with the name, id and class
-    var getElementObject = (element, name, id, hasClass) => {
-      element.name = name;
-      element.id = id;
-      element.class = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
-
-      return element;
-    };
-
-    // Returns the id and class values for an element
-    var getIdAndClassValues = (hasId, hasClasses, element) => {
-      if (hasId.length > 1 && hasClasses.length >= 1) {
-        element = getElementObject(
-          element,
-          hasId[0],
-          hasId[1].substring(0, hasId[1].indexOf('.')),
-          hasClasses
-        );
-      } else if (hasId.length === 2 || hasClasses.length >= 1) {
-        element = getElementObject(
-          element,
-          hasId.length === 2 ? hasId[0] : name,
-          hasId.length === 2 ? hasId[1] : false,
-          hasId.length === 2 ? false : hasClasses
-        );
-      }
-
-      return element;
-    };
-
-    return getIdAndClassValues(hasId, hasClasses, element);
-  }
-
-  /**
-   * Return the type of the element (id, class or tag)
-   *
-   * @param {string} elementName
-   * @returns {string} type of the element (id, class or tag)
-   * @protected
-   */
-  function getElementType(elementName) {
-    return this.getElement(elementName, true);
-  }
-
-  /**
-   * Short cuts for some properties
-   *
-   * @param {string} property
-   * @returns {string} element property.
-   * @protected
-   */
-  function getProperty(property) {
-    var properties = {
-      'class': 'className',
-      'tag': 'className',
-      'text': 'innerHTML',
-      'content': 'innerHTML'
-    };
-
-    return properties[property] || property;
-  }
-
-  /**
    * Get a stored regular expression.
    *
    * @param {string} regex
@@ -193,7 +92,9 @@ function Utils() {
    * @protected
    */
   function getRegexMatch(element, regex) {
-    return element.match(new RegExp(regex));
+    var match = element.match(new RegExp(regex));
+    console.log('$$$$$$$>>>>', element, regex.toString(), match);
+    return match === null ? false : match;
   }
 
   /**
@@ -228,9 +129,9 @@ function Utils() {
   function isDirective(element) {
     var match;
 
-    if (this.isString(element) && getRegexMatch(element, getRegex('directive'))) {
+    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
       return true;
-    } else if (this.isString(element)) {
+    } else if (isString(element)) {
       match = getRegexMatch(element, getRegex('selfClosingDirective'));
 
       if (match) {
@@ -319,8 +220,8 @@ function Utils() {
    * @protected
    */
   function isSpecialTag(tag, props) {
-    if (this.isIn(tag, SPECIAL_TAGS) && props) {
-      props = this.getDefaultAttrs(tag, props);
+    if (isIn(tag, SPECIAL_TAGS) && props) {
+      props = getDefaultAttrs(tag, props);
     }
 
     return props;
@@ -368,17 +269,6 @@ function Utils() {
 
       return obj1;
     }
-  }
-
-  /**
-   * Creates a new element
-   *
-   * @param {string} element
-   * @returns {object} new element
-   * @protected
-   */
-  function newElement(element) {
-    return document.createElement(element);
   }
 }
 

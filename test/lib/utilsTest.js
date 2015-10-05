@@ -68,33 +68,39 @@ describe('Utils', () => {
     });
   });
 
-  describe('#getElement', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getElement, 'function', 'getElement should be a function');
-    });
-  });
-
-  describe('#getElementNameAndType', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getElementNameAndType, 'function', 'getElementNameAndType should be a function');
-    });
-  });
-
-  describe('#getElementType', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getElementType, 'function', 'getElementType should be a function');
-    });
-  });
-
-  describe('#getProperty', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getProperty, 'function', 'getProperty should be a function');
-    });
-  });
-
   describe('#getRegex', () => {
     it('should be a function', () => {
       assert.typeOf(utils.getRegex, 'function', 'getRegex should be a function');
+    });
+
+    it('should return a regex for directive', () => {
+      var actualResult = utils.getRegex('directive');
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a directive regex');
+    });
+
+    it('should return a regex for selfClosingDirective', () => {
+      var actualResult = utils.getRegex('selfClosingDirective');
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a selfClosingDirective regex');
+    });
+
+    it('should return a regex for removeQuotes', () => {
+      var actualResult = utils.getRegex('removeQuotes');
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a removeQuotes regex');
+    });
+
+    it('should return a regex for curlyBrackets', () => {
+      var actualResult = utils.getRegex('curlyBrackets');
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a curlyBrackets regex');
+    });
+
+    it('should return false for unknown regex', () => {
+      var actualResult = utils.getRegex('foo');
+
+      assert.isFalse(actualResult, 'actualResult should be a false');
     });
   });
 
@@ -102,11 +108,77 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.getRegexMatch, 'function', 'getRegexMatch should be a function');
     });
+
+    it('should validate if a given string is a self closing directive', () => {
+      var directive = '<TestDirective />';
+      var regex = utils.getRegex('selfClosingDirective');
+      var actualResult = utils.getRegexMatch(directive, regex);
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a self closing directive');
+    });
+
+    it('should validate if a given string is a directive with attributes', () => {
+      var directive = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
+      var regex = utils.getRegex('directive');
+      var actualResult = utils.getRegexMatch(directive, regex);
+
+      assert.isTrue(actualResult !== false, 'actualResult should be a directive with attributes');
+    });
+
+    it('should remove double quoutes in a string', () => {
+      var textWithDoubleQuotes = '"Foo"';
+      var expectedResult = 'Foo';
+      var actualResult = textWithDoubleQuotes.replace(utils.getRegex('removeQuotes'), '');
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+
+    it('should remove single quoutes in a string', () => {
+      var textWithSingleQuotes = "'Bar'";
+      var expectedResult = 'Bar';
+      var actualResult = textWithSingleQuotes.replace(utils.getRegex('removeQuotes'), '');
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
   });
 
   describe('#isArray', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isArray, 'function', 'isArray should be a function');
+    });
+
+    it('should validate if a variable is an Array', () => {
+      var value = [1, 2, 3];
+
+      assert.isTrue(utils.isArray(value), '[1, 2, 3] should be an array');
+    });
+
+    it('should validate if a string value is not an Array', () => {
+      var value = 'Foo';
+
+      assert.isFalse(utils.isArray(value), 'Foo should not be Array');
+    });
+
+    it('should validate if a number value is not an Array', () => {
+      var value = 9999;
+
+      assert.isFalse(utils.isArray(value), 'Number 9999 should not be String');
+    });
+
+    it('should validate if an object is not an Array', () => {
+      var value = {
+        foo: 'bar'
+      };
+
+      assert.isFalse(utils.isArray(value), 'Object should not be String');
+    });
+
+    it('should validate if a function is not an Array', () => {
+      var value = () => {
+        return 'Foo';
+      };
+
+      assert.isFalse(utils.isArray(value), 'Function should not be String');
     });
   });
 
@@ -235,12 +307,6 @@ describe('Utils', () => {
       var mergedObj = utils.merge(obj1, obj2);
 
       assert.deepEqual(mergedObj, expectedObj, 'mergedObj should match expectedObj');
-    });
-  });
-
-  describe('#newElement', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.newElement, 'function', 'newElement should be a function');
     });
   });
 });
