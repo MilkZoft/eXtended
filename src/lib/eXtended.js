@@ -1,7 +1,7 @@
 'use strict';
 
-let elements = require('./elements');
-let directives = require('./directives');
+var elements = require('./elements');
+var directives = require('./directives');
 
 function Extended() {
   // Methods from elements
@@ -13,7 +13,7 @@ function Extended() {
   this.createDirective = directives.createDirective;
 
   return this;
-};
+}
 
 // Exporting object
 module.exports = new Extended();

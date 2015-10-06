@@ -7,16 +7,35 @@
     "type": "git",
     "url": "git://github.com/MilkZoft/eXtended.git"
   },
+  "scripts": {
+    "test": "gulp test"
+  },
   "devDependencies": {
     "babelify": "latest",
     "browserify": "latest",
+    "browserify-shim": "latest",
+    "chai": "latest",
     "eslint": "latest",
     "git-guppy": "latest",
     "guppy-pre-commit": "latest",
+    "guppy-pre-push": "latest",
     "gulp": "latest",
     "gulp-eslint": "latest",
+    "gulp-karma": "latest",
     "gulp-watch": "latest",
+    "karma": "latest",
+    "karma-browserify": "latest",
+    "karma-chai": "latest",
+    "karma-mocha": "latest",
+    "karma-mocha-reporter": "latest",
+    "karma-firefox-launcher": "latest",
+    "karma-sinon": "latest",
+    "mocha": "latest",
+    "sinon": "latest",
     "stringify": "latest",
     "vinyl-source-stream": "latest"
+  },
+  "browserify-shim": {
+    "external": "global:External"
   }
 }

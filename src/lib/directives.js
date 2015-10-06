@@ -1,18 +1,18 @@
 'use strict';
 
-let utils = require('./utils');
+var utils = require('./utils');
 
 function Directives() {
   // Properties
-  let directives = {};
+  var directives = {};
 
   // Methods
   this.createDirective = createDirective;
   this.getAllDirectives = getAllDirectives;
-  this.getCompiledHTML = getCompiledHTML;
   this.getDirective = getDirective;
   this.getDirectiveProps = getDirectiveProps;
   this.removeDirective = removeDirective;
+  this.setDirective = setDirective;
 
   return this;
 
@@ -31,31 +31,6 @@ function Directives() {
   }
 
   /**
-   * Save a new directive
-   *
-   * @param {string} directive
-   * @param {object} obj
-   * @returns {obj} directive object
-   * @public
-   */
-  function setDirective(directive, obj) {
-    if (!utils.isDefined(directives[directive])) {
-      directives[directive] = obj;
-    }
-  }
-
-  /**
-   * Get a existing directive
-   *
-   * @param {string} directive
-   * @returns {obj} directive object
-   * @public
-   */
-  function getDirective(directive) {
-    return utils.isDefined(directives[directive]) ? directives[directive] : {};
-  }
-
-  /**
    * Get all existing directives
    *
    * @returns {obj} directives object
@@ -66,15 +41,14 @@ function Directives() {
   }
 
   /**
-   * Get all existing directives
+   * Get a existing directive
    *
-   * @returns {obj} directives object
+   * @param {string} directive
+   * @returns {obj} directive object
    * @public
    */
-  function removeDirective(directive) {
-    if (utils.isDefined(directives[directive])) {
-      delete directives[directive];
-    }
+  function getDirective(directive) {
+    return utils.isDefined(directives[directive]) ? directives[directive] : false;
   }
 
   /**
@@ -85,13 +59,13 @@ function Directives() {
    * @protected
    */
   function getDirectiveProps(element) {
-    let attributes = {};
-    let attributesSplit;
-    let directiveMatch;
-    let selfClosingDirective = utils.isSelfClosingDirective(element);
-    let values;
+    var attributes = {};
+    var attributesSplit;
+    var directiveMatch;
+    var selfClosingDirective = utils.isSelfClosingDirective(element);
+    var values;
 
-    directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, getRegex('directive')) : [];
+    directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, utils.getRegex('directive')) : [];
 
     attributes.$directiveName = directiveMatch[2] || selfClosingDirective;
 
@@ -116,37 +90,31 @@ function Directives() {
   }
 
   /**
-   * Get compiled HTML (with variables values)
+   * Get all existing directives
    *
-   * @param {string} html
-   * @param {object} directiveProps
-   * @returns {string} compiled HTML
-   * @protected
+   * @returns {obj} directives object
+   * @public
    */
-  function getCompiledHTML(html, directiveProps) {
-    let variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
-    let variableName;
-    let propsStr;
-    let newVariable;
-
-    utils.forEach(variablesMatch, variable => {
-      variableName = variable.replace('{{', '').replace('}}', '').trim();
-      propsStr = variableName.substring(0, 11);
-
-      if (variableName === 'this.props.attributes') {
-        html = html.replace(variable, directiveProps.props.rawAttributes);
-      } else if (propsStr === 'this.props.') {
-        newVariable = variableName.substring(11);
-
-        if (utils.isDefined(directiveProps.props[newVariable])) {
-          html = html.replace(variable, directiveProps.props[newVariable]);
-        }
-      }
-    });
-
-    return html;
+  function removeDirective(directive) {
+    if (utils.isDefined(directives[directive])) {
+      delete directives[directive];
+    }
   }
-};
+
+  /**
+   * Save a new directive
+   *
+   * @param {string} directive
+   * @param {object} obj
+   * @returns {obj} directive object
+   * @public
+   */
+  function setDirective(directive, obj) {
+    if (!utils.isDefined(directives[directive])) {
+      directives[directive] = obj;
+    }
+  }
+}
 
 // Exporting object
 module.exports = new Directives();

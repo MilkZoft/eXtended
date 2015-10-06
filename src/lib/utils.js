@@ -13,77 +13,75 @@ function Utils() {
   // Methods
   this.forEach = forEach;
   this.getDefaultAttrs = getDefaultAttrs;
-  this.getElement = getElement;
-  this.getElementNameAndType = getElementNameAndType;
-  this.getElementType = getElementType;
-  this.getProperty = getProperty;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
+  this.inArray = inArray;
+  this.inObject = inObject;
   this.isArray = isArray;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
   this.isFunction = isFunction;
-  this.isIn = isIn;
-  this.isInitializedArray = isInitializedArray;
+  this.isNull = isNull;
   this.isObject = isObject;
   this.isSelfClosingDirective = isSelfClosingDirective;
   this.isSpecialTag = isSpecialTag;
   this.isString = isString;
   this.log = log;
   this.merge = merge;
-  this.newElement = newElement;
 
   return this;
 
   /**
-   * Logs a message.
+   * Easy way to iterate over arrays and objects.
    *
-   * @param {string} message
-   * @returns {void}
-   * @internal
+   * @param {array || object} items
+   * @param {function} callback
+   * @protected
    */
-  function log(message) {
-    console.log('eXtended:', message);
-  }
-
-  function getRegex(regex) {
-    return REGEX[regex] || false;
+  function forEach(items, callback) {
+    if (isArray(items)) {
+      for (var i = 0; i < items.length; i++) {
+        callback(items[i]);
+      }
+    } else {
+      Object.keys(items).forEach(callback);
+    }
   }
 
   /**
-   * Returns true if an element is a directive
+   * Get default attributes for special tags (like link or script).
    *
-   * @param {string} elements
-   * @returns {boolean} true if is a directive
+   * @param {string} element
+   * @param {string} url
+   * @returns {object} default properties
    * @protected
    */
-  function isDirective(element) {
-    let match;
-
-    if (this.isString(element) && getRegexMatch(element, getRegex('directive'))) {
-      return true;
-    } else if (this.isString(element)) {
-      match = getRegexMatch(element, getRegex('selfClosingDirective'));
-
-      if (match) {
-        return true;
+  function getDefaultAttrs(element, url) {
+    var properties = {
+      link: {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href:  url || 'someStyle.css',
+        media: 'all'
+      },
+      script: {
+        type: 'application/javascript',
+        src: url || 'someScript.js'
       }
-    }
+    };
 
-    return false;
+    return properties[element] || {};
   }
 
-  function isSelfClosingDirective(element) {
-    let match = getRegexMatch(element, getRegex('selfClosingDirective'));
-    let directiveName;
-
-    if (match) {
-      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
-
-      return directiveName;
-    }
-
-    return false;
+  /**
+   * Get a stored regular expression.
+   *
+   * @param {string} regex
+   * @returns {regex} from REGEX constant
+   * @protected
+   */
+  function getRegex(regex) {
+    return REGEX[regex] || false;
   }
 
   /**
@@ -95,18 +93,33 @@ function Utils() {
    * @protected
    */
   function getRegexMatch(element, regex) {
-    return element.match(new RegExp(regex));
+    var match = element.match(new RegExp(regex));
+
+    return !isNull(match) ? match : false;
+  }
+
+/**
+   * Validates if an item exists into an array.
+   *
+   * @param {string} item
+   * @param {array} obj
+   * @returns {boolean} true if the item exists, false if not.
+   * @protected
+   */
+  function inArray(item, array) {
+    return array instanceof Array && array.indexOf(item) >= 0;
   }
 
   /**
-   * Validates if a value is String
+   * Validates if an item exists into an object.
    *
-   * @param {string} value
-   * @returns {boolean} true if is String
+   * @param {string} item
+   * @param {object} obj
+   * @returns {boolean} true if the item exists, false if not.
    * @protected
    */
-  function isString(value) {
-    return typeof value === 'string';
+  function inObject(item, obj) {
+    return typeof obj[item] !== 'undefined';
   }
 
   /**
@@ -121,14 +134,36 @@ function Utils() {
   }
 
   /**
-   * Validates if a passed variable is an object
+   * Validates if a passed value is defined
    *
-   * @param {object} obj
-   * @returns {boolean} true if is Object
+   * @param {mixed} value
+   * @param {boolean} isNot
+   * @returns {boolean} true if is defined
    * @protected
    */
-  function isObject(obj) {
-    return obj instanceof Object && !isArray(obj);
+  function isDefined(value, isNot) {
+    if (typeof isNot === 'undefined') {
+      return typeof value !== 'undefined';
+    } else {
+      return typeof value !== 'undefined' && value !== isNot;
+    }
+  }
+
+  /**
+   * Returns true if an element is a directive
+   *
+   * @param {string} element
+   * @returns {boolean} true if is a directive
+   * @protected
+   */
+  function isDirective(element) {
+    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
+      return true;
+    } else if (isString(element)) {
+      return !!getRegexMatch(element, getRegex('selfClosingDirective'));
+    }
+
+    return false;
   }
 
   /**
@@ -143,59 +178,83 @@ function Utils() {
   }
 
   /**
-   * Validates if a passed array is initialized
-   *
-   * @param {array} items
-   * @returns {boolean} true if the first position is defined
-   * @protected
-   */
-  function isInitializedArray(items) {
-    return isDefined(items[0]);
-  }
-
-  /**
-   * Convert a Collection to an Array
-   *
-   * @param {collection} collection
-   * @returns {array} new array or same array
-   * @protected
-   */
-  function convertCollectionToArray(collection) {
-    if (isInitializedArray(collection)) {
-      return [].slice.call(collection);
-    }
-
-    return collection;
-  }
-
-  /**
-   * Validates if a passed value is defined
+   * Validates if a passed value is null
    *
    * @param {mixed} value
-   * @returns {boolean} true if is defined
+   * @returns {boolean} true if is null
    * @protected
    */
-  function isDefined(value) {
-    return typeof value !== 'undefined';
+  function isNull(value) {
+    return value === null;
   }
 
   /**
-   * Easy way to iterate over arrays and objects.
+   * Validates if a passed variable is an object
    *
-   * @param {array || object} items
-   * @param {function} callback
+   * @param {object} obj
+   * @returns {boolean} true if is Object
    * @protected
    */
-  function forEach(items, callback) {
-    items = convertCollectionToArray(items);
+  function isObject(obj) {
+    return obj instanceof Object && !isArray(obj) && typeof obj !== 'function';
+  }
 
-    if (isArray(items)) {
-      for (let i = 0; i < items.length; i++) {
-        callback(items[i]);
-      }
-    } else {
-      Object.keys(items).forEach(callback);
+  /**
+   * Returns true if an element is a self closing directive
+   *
+   * @param {string} element
+   * @returns {boolean} true if is a self closing directive
+   * @protected
+   */
+  function isSelfClosingDirective(element) {
+    var match = getRegexMatch(element, getRegex('selfClosingDirective'));
+    var directiveName;
+
+    if (match) {
+      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
+
+      return directiveName;
     }
+
+    return false;
+  }
+
+  /**
+   * Validates if a given tag is a special tag.
+   *
+   * @param {string} tag
+   * @param {object} props
+   * @returns {object} props with default attributes.
+   * @protected
+   */
+  function isSpecialTag(tag, props) {
+    if (inArray(tag, SPECIAL_TAGS) && props) {
+      return getDefaultAttrs(tag, props);
+    }
+
+    return false;
+  }
+
+  /**
+   * Validates if a value is String
+   *
+   * @param {string} value
+   * @returns {boolean} true if is String
+   * @protected
+   */
+  function isString(value) {
+    return typeof value === 'string';
+  }
+
+  /**
+   * Logs a message.
+   *
+   * @param {string} message
+   * @returns {void}
+   * @internal
+   */
+  function log(message) {
+    console.log('eXtended:', message);
   }
 
   /**
@@ -219,173 +278,7 @@ function Utils() {
       return obj1;
     }
   }
-
-  /**
-   * Validates if an item exists into an array or an object.
-   *
-   * @param {string} item
-   * @param {array || object} obj
-   * @returns {boolean} true if the item exists, false if not.
-   * @protected
-   */
-  function isIn(item, obj) {
-    if (obj instanceof Array) {
-      return obj.indexOf(item) >= 0;
-    } else {
-      return typeof obj[item] !== 'undefined';
-    }
-  };
-
-  /**
-   * Short cuts for some properties
-   *
-   * @param {string} property
-   * @returns {string} element property.
-   * @protected
-   */
-  function getProperty(property) {
-    let properties = {
-      'class': 'className',
-      'tag': 'className',
-      'text': 'innerHTML',
-      'content': 'innerHTML'
-    };
-
-    return properties[property] || property;
-  };
-
-  /**
-   * Return an element object depends on type (id, class or tag)
-   *
-   * @param {string} elementName
-   * @param {boolean} getType = false
-   * @returns {object} element object depends on type
-   * @protected
-   */
-  function getElement(elementName, getType = false) {
-    let type = elementName[0];
-    let query = type === '.' ?
-                  document.querySelectorAll(elementName) :
-                  document.querySelector(elementName);
-    let types = {
-      '.': 'class',
-      '#': 'id'
-    };
-
-    return !getType ? query : this.isIn(type, types) ? types[type] : 'tag';
-  };
-
-  /**
-   * Return the type of the element (id, class or tag)
-   *
-   * @param {string} elementName
-   * @returns {string} type of the element (id, class or tag)
-   * @protected
-   */
-  function getElementType(elementName) {
-    return this.getElement(elementName, true);
-  };
-
-  /**
-   * Return the type and name of the element (id, class or tag).
-   *
-   * @param {string} tag
-   * @returns {object} element with properties.
-   * @protected
-   */
-  function getElementNameAndType(tag) {
-    let hasId = tag.split('#');
-    let hasClasses = tag.split('.');
-    let name = hasClasses.shift();
-    let element = {
-      name: tag
-    };
-
-    // Returns the object element with the name, id and class
-    let getElementObject = (element, name, id, hasClass) => {
-      element.name = name;
-      element.id = id;
-      element.class = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
-
-      return element;
-    };
-
-    // Returns the id and class values for an element
-    let getIdAndClassValues = (hasId, hasClasses, element) => {
-      if (hasId.length > 1 && hasClasses.length >= 1) {
-        element = getElementObject(
-          element,
-          hasId[0],
-          hasId[1].substring(0, hasId[1].indexOf('.')),
-          hasClasses
-        );
-      } else if (hasId.length === 2 || hasClasses.length >= 1) {
-        element = getElementObject(
-          element,
-          hasId.length === 2 ? hasId[0] : name,
-          hasId.length === 2 ? hasId[1] : false,
-          hasId.length === 2 ? false : hasClasses
-        );
-      }
-
-      return element;
-    };
-
-    return getIdAndClassValues(hasId, hasClasses, element);
-  };
-
-  /**
-   * Creates a new element
-   *
-   * @param {string} element
-   * @returns {object} new element
-   * @protected
-   */
-  function newElement(element) {
-    return document.createElement(element);
-  };
-
-  /**
-   * Get default attributes for special tags (like link or script).
-   *
-   * @param {string} element
-   * @param {string} url
-   * @returns {object} default properties
-   * @protected
-   */
-  function getDefaultAttrs(element, url) {
-    let properties = {
-      link: {
-        rel: 'stylesheet',
-        type: 'text/css',
-        href:  url || 'someStyle.css',
-        media: 'all'
-      },
-      script: {
-        type: 'application/javascript',
-        src: url || 'someScript.js'
-      }
-    };
-
-    return properties[element];
-  };
-
-  /**
-   * Validates if a given tag is a special tag.
-   *
-   * @param {string} tag
-   * @param {object} props
-   * @returns {object} props with default attributes.
-   * @protected
-   */
-  function isSpecialTag(tag, props) {
-    if (this.isIn(tag, SPECIAL_TAGS) && props) {
-      props = this.getDefaultAttrs(tag, props);
-    }
-
-    return props;
-  };
-};
+}
 
 // Exporting object
 module.exports = new Utils();
