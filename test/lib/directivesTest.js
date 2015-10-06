@@ -96,4 +96,10 @@ describe('Directives', () => {
       assert.isFalse(FooDirective, 'FooDirective should be false');
     });
   });
+
+  describe('#setDirective', () => {
+    it('should be a function', () => {
+      assert.typeOf(directives.setDirective, 'function', 'setDirective should be a function');
+    });
+  });
 });

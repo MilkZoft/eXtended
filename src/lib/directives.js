@@ -12,6 +12,7 @@ function Directives() {
   this.getDirective = getDirective;
   this.getDirectiveProps = getDirectiveProps;
   this.removeDirective = removeDirective;
+  this.setDirective = setDirective;
 
   return this;
 
@@ -89,6 +90,18 @@ function Directives() {
   }
 
   /**
+   * Get all existing directives
+   *
+   * @returns {obj} directives object
+   * @public
+   */
+  function removeDirective(directive) {
+    if (utils.isDefined(directives[directive])) {
+      delete directives[directive];
+    }
+  }
+
+  /**
    * Save a new directive
    *
    * @param {string} directive
@@ -99,18 +112,6 @@ function Directives() {
   function setDirective(directive, obj) {
     if (!utils.isDefined(directives[directive])) {
       directives[directive] = obj;
-    }
-  }
-
-  /**
-   * Get all existing directives
-   *
-   * @returns {obj} directives object
-   * @public
-   */
-  function removeDirective(directive) {
-    if (utils.isDefined(directives[directive])) {
-      delete directives[directive];
     }
   }
 }
