@@ -47,7 +47,7 @@ function Directives() {
    * @public
    */
   function getDirective(directive) {
-    return utils.isDefined(directives[directive]) ? directives[directive] : {};
+    return utils.isDefined(directives[directive]) ? directives[directive] : false;
   }
 
   /**
@@ -64,7 +64,7 @@ function Directives() {
     var selfClosingDirective = utils.isSelfClosingDirective(element);
     var values;
 
-    directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, getRegex('directive')) : [];
+    directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, utils.getRegex('directive')) : [];
 
     attributes.$directiveName = directiveMatch[2] || selfClosingDirective;
 
