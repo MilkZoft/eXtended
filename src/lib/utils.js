@@ -13,6 +13,7 @@ function Utils() {
   // Methods
   this.forEach = forEach;
   this.getDefaultAttrs = getDefaultAttrs;
+  this.getElements = getElements;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
   this.inArray = inArray;
@@ -71,6 +72,28 @@ function Utils() {
     };
 
     return properties[element] || {};
+  }
+
+  /**
+   * Get elements from arguments
+   *
+   * @param {array} args
+   * @returns {array} elements
+   * @protected
+   */
+  function getElements(args) {
+    var elements = [];
+    var i = 0;
+
+    if (args.length > 0) {
+      for (i = 0; i < args.length; i++) {
+        elements.push(args[i]);
+      }
+
+      elements.shift();
+    }
+
+    return elements;
   }
 
   /**

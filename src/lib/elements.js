@@ -34,7 +34,7 @@ function Elements() {
     var type;
 
     // Get properties for class or id and default attributes
-    var getProps = (element, props) => {
+    var getProps = function(element, props) {
       var newProps = utils.isSpecialTag(tag, props);
 
       if (element.id || element.class) {
@@ -53,7 +53,7 @@ function Elements() {
     };
 
     // Builds the object
-    var buildElement = () => {
+    var buildElement = function() {
       props = getProps(element, props);
 
       if (content) {
@@ -125,7 +125,7 @@ function Elements() {
     };
 
     // Returns the object element with the name, id and class
-    var getElementObject = (element, name, id, hasClass) => {
+    var getElementObject = function(element, name, id, hasClass) {
       var className = hasClass.length > 1 ? hasClass.join(' ') : hasClass[0];
 
       if (utils.isDefined(name, false)) {
@@ -144,7 +144,7 @@ function Elements() {
     };
 
     // Returns the id and class values for an element
-    var getIdAndClassValues = (hasId, hasClasses, element) => {
+    var getIdAndClassValues = function(hasId, hasClasses, element) {
       if (hasId.length > 1 && hasClasses.length >= 1) {
         element = getElementObject(
           element,
@@ -214,7 +214,9 @@ function Elements() {
    * @param {array} elements
    * @public
    */
-  function render(target, ...elements) {
+  function render(target) {
+    var elements = utils.getElements(arguments);
+
     if (!target || elements.length === 0) {
       utils.log('You must specify a target and element to render');
       return;
@@ -239,7 +241,7 @@ function Elements() {
 
       el.innerHTML = html;
     } else {
-      utils.forEach(elements, element => {
+      utils.forEach(elements, function(element) {
         if (utils.isObject(element)) {
           el.appendChild(element);
         }

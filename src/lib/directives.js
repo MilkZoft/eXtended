@@ -77,7 +77,7 @@ function Directives() {
       attributes.$allAttributes = directiveMatch[3];
       attributesSplit = directiveMatch[3].replace(utils.getRegex('removeQuotes'), '').split(' ');
 
-      utils.forEach(attributesSplit, attribute => {
+      utils.forEach(attributesSplit, function(attribute) {
         values = attribute.split('=');
 
         attributes[values[0]] = values[1];

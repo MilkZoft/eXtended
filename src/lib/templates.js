@@ -22,7 +22,7 @@ function Templates() {
     var propsStr;
     var newVariable;
 
-    utils.forEach(variablesMatch, variable => {
+    utils.forEach(variablesMatch, function(variable) {
       variableName = variable.replace('{{', '').replace('}}', '').trim();
       propsStr = variableName.substring(0, 11);
 

@@ -72,6 +72,20 @@ describe('Utils', () => {
     });
   });
 
+  describe('#getElements', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.getElements, 'function', 'getElements should be a function');
+    });
+
+    it('should return the elements from arguments', () => {
+      var args = [1, 2, 3, 4, 5];
+      var actualResult = utils.getElements(args);
+      var expectedResult = [2, 3, 4, 5];
+
+      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
+    });
+  });
+
   describe('#getRegex', () => {
     it('should be a function', () => {
       assert.typeOf(utils.getRegex, 'function', 'getRegex should be a function');
