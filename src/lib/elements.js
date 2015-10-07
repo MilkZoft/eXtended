@@ -61,7 +61,7 @@ function Elements() {
       }
 
       if (utils.isObject(props)) {
-        utils.forEach(props, key => {
+        utils.forEach(props, function(key) {
           value = props[key] || '';
           property = getProperty(key);
           el[property] = value;
@@ -98,7 +98,7 @@ function Elements() {
    * @returns {object} element object depends on type
    * @protected
    */
-  function getElement(elementName, getType = false) {
+  function getElement(elementName, getType) {
     var type = elementName[0];
     var query = type === '.' ? document.querySelectorAll(elementName) : document.querySelector(elementName);
     var types = {
@@ -106,7 +106,7 @@ function Elements() {
       '#': 'id'
     };
 
-    return !getType ? query : utils.inObject(type, types) ? types[type] : 'tag';
+    return !utils.isDefined(getType) ? query : utils.inObject(type, types) ? types[type] : 'tag';
   }
 
   /**
