@@ -13,9 +13,9 @@ function CheckLinkCtrl() {
 
     eX.createDirective('CheckLink', {
       showMessage: function() {
-        var params = eX.getElements(arguments, true);
+        var params = eX.getArguments(arguments, true);
 
-        console.log('Dentro de showMessage', params);
+        console.log('Inside showMessage', params);
       },
       render: function() {
         return linkTemplate;

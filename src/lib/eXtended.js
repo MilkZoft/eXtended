@@ -14,7 +14,7 @@ function Extended() {
   this.createDirective = directives.createDirective;
 
   // Methods from share
-  this.getElements = shared.getElements;
+  this.getArguments = shared.getArguments;
 
   return this;
 }
