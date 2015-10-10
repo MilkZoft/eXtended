@@ -6,7 +6,7 @@ var stringify = require('stringify');
 
 module.exports = function() {
   gulp.task('browserify', function() {
-    return browserify('./examples/source/app.js')
+    return browserify('./examples/public/js/app.js')
       .transform(babelify)
       .transform(stringify(['.html']))
       .bundle()
