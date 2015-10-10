@@ -37,52 +37,9 @@ describe('Utils', () => {
     });
   });
 
-  describe('#getDefaultAttrs', () => {
+  describe('#getJson', () => {
     it('should be a function', () => {
-      assert.typeOf(utils.getDefaultAttrs, 'function', 'getDefaultAttrs should be a function');
-    });
-
-    it('should return default attributes for a link tag', () => {
-      var actualResult = utils.getDefaultAttrs('link', 'foo.css');
-      var expectedResult = {
-        rel: 'stylesheet',
-        type: 'text/css',
-        href:  'foo.css',
-        media: 'all'
-      };
-
-      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
-    });
-
-    it('should return default attributes for a script tag', () => {
-      var actualResult = utils.getDefaultAttrs('script', 'bar.js');
-      var expectedResult = {
-        type: 'application/javascript',
-        src:  'bar.js'
-      };
-
-      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
-    });
-
-    it('should return an empty object if the tag is not a script or link', () => {
-      var actualResult = utils.getDefaultAttrs('div');
-      var expectedResult = {};
-
-      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
-    });
-  });
-
-  describe('#getElements', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getElements, 'function', 'getElements should be a function');
-    });
-
-    it('should return the elements from arguments', () => {
-      var args = [1, 2, 3, 4, 5];
-      var actualResult = utils.getElements(args);
-      var expectedResult = [2, 3, 4, 5];
-
-      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
+      assert.typeOf(utils.getJson, 'function', 'getJson should be a function');
     });
   });
 
@@ -155,6 +112,12 @@ describe('Utils', () => {
       var actualResult = textWithSingleQuotes.replace(utils.getRegex('removeQuotes'), '');
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+  });
+
+  describe('#getStringFromJson', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.getStringFromJson, 'function', 'getStringFromJson should be a function');
     });
   });
 
@@ -331,6 +294,12 @@ describe('Utils', () => {
     });
   });
 
+  describe('#isJson', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.isJson, 'function', 'isJson should be a function');
+    });
+  });
+
   describe('#isNull', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isNull, 'function', 'isNull should be a function');
@@ -406,24 +375,6 @@ describe('Utils', () => {
       var actualResult = !!utils.isSelfClosingDirective(directiveWithAttributes);
 
       assert.isFalse(actualResult, 'actualResult should be false');
-    });
-  });
-
-  describe('#isSpecialTag', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.isSpecialTag, 'function', 'isSpecialTag should be a function');
-    });
-
-    it('should validate if a link is a special tag', () => {
-      var actualResult = !!utils.isSpecialTag('link', 'style.css');
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if a script is a special tag', () => {
-      var actualResult = !!utils.isSpecialTag('script', 'script.js');
-
-      assert.isTrue(actualResult, 'actualResult should be true');
     });
   });
 
@@ -504,6 +455,12 @@ describe('Utils', () => {
       var mergedObj = utils.merge(obj1, obj2);
 
       assert.deepEqual(mergedObj, expectedObj, 'mergedObj should match expectedObj');
+    });
+  });
+
+  describe('#search', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.search, 'function', 'search should be a function');
     });
   });
 });
