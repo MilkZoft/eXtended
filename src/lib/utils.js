@@ -2,32 +2,34 @@
 
 function Utils() {
   // Constants
-  const SPECIAL_TAGS = ['link', 'script'];
   const REGEX = {
     directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
     selfClosingDirective: /<[^>]+?\/[ ]*>/,
     removeQuotes: /["']/g,
-    curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g
+    curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
+    tagName: /<(\w+)\s+\w+.*?>/
   };
 
   // Methods
   this.forEach = forEach;
-  this.getDefaultAttrs = getDefaultAttrs;
+  this.getJson = getJson;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
+  this.getStringFromJson = getStringFromJson;
   this.inArray = inArray;
   this.inObject = inObject;
   this.isArray = isArray;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
   this.isFunction = isFunction;
+  this.isJson = isJson;
   this.isNull = isNull;
   this.isObject = isObject;
   this.isSelfClosingDirective = isSelfClosingDirective;
-  this.isSpecialTag = isSpecialTag;
   this.isString = isString;
   this.log = log;
   this.merge = merge;
+  this.search = search;
 
   return this;
 
@@ -38,39 +40,32 @@ function Utils() {
    * @param {function} callback
    * @protected
    */
-  function forEach(items, callback) {
+  function forEach(items, callback, isHTMLCollection) {
     if (isArray(items)) {
       for (var i = 0; i < items.length; i++) {
         callback(items[i]);
       }
+    } else if (callback === true) {
+      console.log(items);
+      return [].slice.call(items);
     } else {
       Object.keys(items).forEach(callback);
     }
   }
 
   /**
-   * Get default attributes for special tags (like link or script).
+   * Get Json from string
    *
-   * @param {string} element
-   * @param {string} url
-   * @returns {object} default properties
+   * @param {string} str
+   * @returns {object} json
    * @protected
    */
-  function getDefaultAttrs(element, url) {
-    var properties = {
-      link: {
-        rel: 'stylesheet',
-        type: 'text/css',
-        href:  url || 'someStyle.css',
-        media: 'all'
-      },
-      script: {
-        type: 'application/javascript',
-        src: url || 'someScript.js'
-      }
-    };
+  function getJson(str) {
+    if (isJson(str)) {
+      return JSON.parse(str);
+    }
 
-    return properties[element] || {};
+    return str;
   }
 
   /**
@@ -98,7 +93,18 @@ function Utils() {
     return !isNull(match) ? match : false;
   }
 
-/**
+  /**
+   * Get a string from json object
+   *
+   * @param {object} obj
+   * @returns {string} json
+   * @protected
+   */
+  function getStringFromJson(obj) {
+    return JSON.stringify(obj);
+  }
+
+  /**
    * Validates if an item exists into an array.
    *
    * @param {string} item
@@ -178,6 +184,27 @@ function Utils() {
   }
 
   /**
+   * Validates if a passed string is a valid json
+   *
+   * @param {string} str
+   * @returns {boolean} true if is Json
+   * @protected
+   */
+  function isJson(str) {
+    if (str === null) {
+      return false;
+    }
+
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Validates if a passed value is null
    *
    * @param {mixed} value
@@ -214,22 +241,6 @@ function Utils() {
       directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
 
       return directiveName;
-    }
-
-    return false;
-  }
-
-  /**
-   * Validates if a given tag is a special tag.
-   *
-   * @param {string} tag
-   * @param {object} props
-   * @returns {object} props with default attributes.
-   * @protected
-   */
-  function isSpecialTag(tag, props) {
-    if (inArray(tag, SPECIAL_TAGS) && props) {
-      return getDefaultAttrs(tag, props);
     }
 
     return false;
@@ -277,6 +288,18 @@ function Utils() {
 
       return obj1;
     }
+  }
+
+  /**
+   * Search a string inside other string
+   *
+   * @param {string} word
+   * @param {string} string
+   * @returns {boolean} true if found the string
+   * @protected
+   */
+  function search(word, string) {
+    return string.search(word) !== -1;
   }
 }
 

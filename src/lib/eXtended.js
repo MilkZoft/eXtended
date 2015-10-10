@@ -2,6 +2,7 @@
 
 var elements = require('./elements');
 var directives = require('./directives');
+var shared = require('./shared');
 
 function Extended() {
   // Methods from elements
@@ -11,6 +12,9 @@ function Extended() {
 
   // Methods from directives
   this.createDirective = directives.createDirective;
+
+  // Methods from share
+  this.getArguments = shared.getArguments;
 
   return this;
 }
