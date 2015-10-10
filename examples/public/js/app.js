@@ -1,7 +1,9 @@
 (function() {
   'use strict';
 
-  var eX = require('./../../src/eXtended');
+  var eX = require('./../../../src/eXtended');
+
+  var CheckLink = require('./app/components/checkLink/checkLink.controller');
 
   var h1 = eX.create('h1#myId.myClass', {
     text: 'Hello World!'
@@ -21,16 +23,5 @@
   eX.render('head', link, script);
   eX.render('body', h1, input, span, p);
 
-  var linkTemplate = require('./templates/link.html');
-
-  eX.createDirective('CheckLink', {
-    render: function() {
-      return linkTemplate;
-    }
-  });
-
-  eX.render('#directive', '<CheckLink />', {
-    $url: 'http://www.codejobs.biz',
-    $content: 'Hello World'
-  });
+  CheckLink.run();
 })();
