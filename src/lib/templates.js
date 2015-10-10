@@ -95,6 +95,13 @@ function Templates() {
     return getNewElementFromTemplate(html);
   }
 
+  /**
+   * Converts HTML string to HTML Collection
+   *
+   * @param {string} html
+   * @returns {object} HTML Collection
+   * @protected
+   */
   function getNewElementFromTemplate(html) {
     var wrapper = dom.newElement('div');
 

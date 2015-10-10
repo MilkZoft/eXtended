@@ -290,6 +290,14 @@ function Utils() {
     }
   }
 
+  /**
+   * Search a string inside other string
+   *
+   * @param {string} word
+   * @param {string} string
+   * @returns {boolean} true if found the string
+   * @protected
+   */
   function search(word, string) {
     return string.search(word) !== -1;
   }

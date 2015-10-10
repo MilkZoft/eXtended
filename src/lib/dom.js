@@ -13,6 +13,16 @@ function Dom() {
 
   return this;
 
+  /**
+   * Attach an event using live function
+   *
+   * @param {string} code
+   * @param {string} directiveTarget
+   * @param {object} directiveClass
+   * @param {string} methodName
+   * @param {array} params
+   * @protected
+   */
   function attachEvent(code, directiveTarget, directiveClass, methodName, params) {
     if (utils.search('ex-click', code)) {
       live('click', directiveTarget, function(event) {
@@ -25,7 +35,7 @@ function Dom() {
    * Return an element object depends on type (id, class or tag)
    *
    * @param {string} elementName
-   * @param {boolean} getType = false
+   * @param {boolean} getType
    * @returns {object} element object depends on type
    * @protected
    */
