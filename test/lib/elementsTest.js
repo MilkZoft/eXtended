@@ -31,7 +31,7 @@ describe('Elements', () => {
 
     it('should create an h1 element with an id and a class', () => {
       var h1 = elements.create('h1#title.title').outerHTML;
-      var expectedResult = '<h1 class="title" id="title"></h1>';
+      var expectedResult = '<h1 id="title" class="title"></h1>';
 
       assert.strictEqual(h1, expectedResult, 'actualResult should be equal to expectedResult');
     });
@@ -54,14 +54,14 @@ describe('Elements', () => {
 
     it('should create a link element with default attributes', () => {
       var link = elements.create('link', 'style.css').outerHTML;
-      var expectedResult = '<link media="all" href="style.css" type="text/css" rel="stylesheet">';
+      var expectedResult = '<link rel="stylesheet" type="text/css" href="style.css" media="all">';
 
       assert.strictEqual(link, expectedResult, 'actualResult should be equal to expectedResult');
     });
 
     it('should create a script element with default attributes', () => {
       var link = elements.create('script', 'script.js').outerHTML;
-      var expectedResult = '<script src="script.js" type="application/javascript"></script>';
+      var expectedResult = '<script type="application/javascript" src="script.js"></script>';
 
       assert.strictEqual(link, expectedResult, 'actualResult should be equal to expectedResult');
     });

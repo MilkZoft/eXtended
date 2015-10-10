@@ -28,7 +28,7 @@
     "karma-chai": "latest",
     "karma-mocha": "latest",
     "karma-mocha-reporter": "latest",
-    "karma-firefox-launcher": "latest",
+    "karma-chrome-launcher": "latest",
     "karma-sinon": "latest",
     "mocha": "latest",
     "sinon": "latest",
