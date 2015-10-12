@@ -1,15 +1,6 @@
 'use strict';
 
 function Utils() {
-  // Constants
-  const REGEX = {
-    directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
-    selfClosingDirective: /<[^>]+?\/[ ]*>/,
-    removeQuotes: /["']/g,
-    curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
-    tagName: /<(\w+)\s+\w+.*?>/
-  };
-
   // Methods
   this.forEach = forEach;
   this.getJson = getJson;
@@ -27,7 +18,6 @@ function Utils() {
   this.isObject = isObject;
   this.isSelfClosingDirective = isSelfClosingDirective;
   this.isString = isString;
-  this.log = log;
   this.merge = merge;
   this.search = search;
 
@@ -41,13 +31,12 @@ function Utils() {
    * @protected
    */
   function forEach(items, callback, isHTMLCollection) {
-    if (isArray(items)) {
-      for (var i = 0; i < items.length; i++) {
+    var i;
+
+    if (isArray(items) || isHTMLCollection) {
+      for (i = 0; i < items.length; i++) {
         callback(items[i]);
       }
-    } else if (callback === true) {
-      console.log(items);
-      return [].slice.call(items);
     } else {
       Object.keys(items).forEach(callback);
     }
@@ -76,6 +65,15 @@ function Utils() {
    * @protected
    */
   function getRegex(regex) {
+    // Constants
+    const REGEX = {
+      directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
+      selfClosingDirective: /<[^>]+?\/[ ]*>/,
+      removeQuotes: /["']/g,
+      curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
+      tagName: /<(\w+)\s+\w+.*?>/
+    };
+
     return REGEX[regex] || false;
   }
 
@@ -150,9 +148,9 @@ function Utils() {
   function isDefined(value, isNot) {
     if (typeof isNot === 'undefined') {
       return typeof value !== 'undefined';
-    } else {
-      return typeof value !== 'undefined' && value !== isNot;
     }
+
+    return typeof value !== 'undefined' && value !== isNot;
   }
 
   /**
@@ -163,7 +161,7 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
+    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
       return true;
     } else if (isString(element)) {
       return !!getRegexMatch(element, getRegex('selfClosingDirective'));
@@ -258,17 +256,6 @@ function Utils() {
   }
 
   /**
-   * Logs a message.
-   *
-   * @param {string} message
-   * @returns {void}
-   * @internal
-   */
-  function log(message) {
-    console.log('eXtended:', message);
-  }
-
-  /**
    * Easy way to merge two objects.
    *
    * @param {object} obj1
@@ -277,17 +264,19 @@ function Utils() {
    * @protected
    */
   function merge(obj1, obj2) {
+    var key;
+
     if (isFunction(Object.assign)) {
       return Object.assign(obj1, obj2);
-    } else {
-      for (var key in obj2) {
-        if (obj2.hasOwnProperty(key)) {
-          obj1[key] = obj2[key];
-        }
-      }
-
-      return obj1;
     }
+
+    for (key in obj2) {
+      if (obj2.hasOwnProperty(key)) {
+        obj1[key] = obj2[key];
+      }
+    }
+
+    return obj1;
   }
 
   /**
@@ -299,7 +288,7 @@ function Utils() {
    * @protected
    */
   function search(word, string) {
-    return string.search(word) !== -1;
+    return isDefined(string) && string.search(word) !== -1;
   }
 }
 
