@@ -96,18 +96,11 @@ function Elements() {
    */
   function render(target) {
     var elements = shared.getArguments(arguments);
-
-    if (!target || elements.length === 0) {
-      utils.log('You must specify a target and element to render');
-      return;
-    }
-
     var el = element(target);
     var directiveProps;
     var directiveClass;
     var properties = {};
-    var newDynamicElement;
-    var newElement;
+    var newElements;
 
     // Rendering a directive
     if (utils.isDirective(elements[0])) {
@@ -125,16 +118,17 @@ function Elements() {
       // Getting the directiveClass object (coming from the controller)
       directiveClass = directives.getDirective(directiveProps.props.$directiveName);
 
-      // Getting the template as a new DOM element
-      newDynamicElement = templates.getNewElementFromTemplate(directiveClass.render());
-
       // Getting the compiled HTML as new DOM element
-      newElement = templates.getCompiledHTML(newDynamicElement, directiveProps, directiveClass);
+      newElements = templates.getCompiledHTML(directiveClass.render(), directiveProps, directiveClass);
 
       // Removing used directive (free memory)
       directives.removeDirective(directiveProps.props.$directiveName);
 
-      el.appendChild(newElement);
+      if (utils.isArray(newElements)) {
+        utils.forEach(newElements, function(element) {
+          el.appendChild(element);
+        });
+      }
     } else {
       // Rendering DOM elements
       utils.forEach(elements, function(element) {
