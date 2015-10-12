@@ -4,10 +4,11 @@ var utils = require('./utils');
 
 function Dom() {
   // Methods
-  this.attachEvent = attachEvent;
+  this.attachEvents = attachEvents;
+  this.getChildren = getChildren;
   this.getElement = getElement;
   this.getElementNameAndType = getElementNameAndType;
-  this.getElementType = getElementType
+  this.getElementType = getElementType;
   this.live = live;
   this.newElement = newElement;
 
@@ -23,12 +24,64 @@ function Dom() {
    * @param {array} params
    * @protected
    */
-  function attachEvent(code, directiveTarget, directiveClass, methodName, params) {
-    if (utils.search('ex-click', code)) {
-      live('click', directiveTarget, function(event) {
-        directiveClass[methodName].apply(undefined, params);
-      });
-    }
+  function attachEvents(html, directiveClass, methods) {
+    var children = [];
+    var attribute;
+    var methodName;
+    var analyzedAttributes = [];
+    var methodObj;
+    var tempMethods = methods.slice(0);
+    var loop = function(element) {
+      do {
+        if (element.nodeType === 1) {
+          if (element.hasAttribute('ex-click')) {
+            attribute = element.getAttribute('ex-click');
+
+            if (!utils.inArray(attribute, analyzedAttributes)) {
+              analyzedAttributes.push(attribute);
+
+              methodName = getMethodName(attribute);
+              methodObj = tempMethods.shift();
+
+              if (utils.isDefined(directiveClass[methodName])) {
+                // This IIFE is to send the values over the closoure
+                (function (methodName, methodObj) {
+                  element.addEventListener('click', function(e) {
+                    directiveClass[methodName].apply(undefined, methodObj[methodName]);
+                  }, false);
+                })(methodName, methodObj);
+              }
+            }
+          }
+
+          children.push(element);
+        }
+
+        if (element.hasChildNodes()) {
+          loop(element.firstChild);
+        }
+      } while (element = element.nextSibling);
+    };
+
+    utils.forEach(getChildren(html), function(child) {
+      loop(child);
+    }, true);
+
+    return children;
+  }
+
+  /**
+   * Get the element target
+   *
+   * @param {string} html
+   * @returns {object} HTML Collection
+   * @protected
+   */
+  function getChildren(html) {
+    var wrapper = newElement('div');
+    wrapper.innerHTML = html;
+
+    return wrapper.children;
   }
 
   /**
@@ -86,15 +139,17 @@ function Dom() {
 
     // Returns the id and class values for an element
     var getIdAndClassValues = function(hasId, hasClasses, element) {
+      var el = element;
+
       if (hasId.length > 1 && hasClasses.length >= 1) {
-        element = getElementObject(
+        el = getElementObject(
           element,
           hasId[0],
           hasId[1].substring(0, hasId[1].indexOf('.')),
           hasClasses
         );
       } else if (hasId.length === 2 || hasClasses.length >= 1) {
-        element = getElementObject(
+        el = getElementObject(
           element,
           hasId.length === 2 ? hasId[0] : name,
           hasId.length === 2 ? hasId[1] : false,
@@ -102,7 +157,7 @@ function Dom() {
         );
       }
 
-      return element;
+      return el;
     };
 
     return getIdAndClassValues(hasId, hasClasses, element);
@@ -119,16 +174,30 @@ function Dom() {
     return getElement(elementName, true);
   }
 
+  function getMethodName(attribute) {
+    var methodName = attribute.replace('{{', '').replace('}}', '').trim();
+    var methodsStr = methodName.substring(0, 5);
+    var newMethod;
+
+    if (methodsStr === 'this.') {
+      newMethod = methodName.substring(5).replace(', ', ',');
+      methodName = newMethod.substring(0, newMethod.indexOf('('));
+
+      return methodName;
+    }
+  }
+
   function live(eventType, elementQuerySelector, fn) {
-    console.log(elementQuerySelector, fn);
     document.addEventListener(eventType, function(event) {
       var querySelector = getElement(elementQuerySelector);
-      console.log(querySelector);
-      if (querySelector) {
-        var el = event.target;
-        var index = -1;
+      var el;
+      var index;
 
-        while (el && ((index = Array.prototype.indexOf.call(querySelector, el)) === -1)) {
+      if (querySelector) {
+        el = event.target;
+        index = -1;
+
+        while (el && (index = Array.prototype.indexOf.call(querySelector, el) === -1)) {
           el = el.parentElement;
         }
 
