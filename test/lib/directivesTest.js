@@ -101,5 +101,26 @@ describe('Directives', () => {
     it('should be a function', () => {
       assert.typeOf(directives.setDirective, 'function', 'setDirective should be a function');
     });
+
+    it('should set a new directive', () => {
+      var TestDirective = {
+        render: function() {
+          return 'foo';
+        }
+      };
+      var directive;
+
+      directives.setDirective('TestDirective', TestDirective);
+
+      directive = directives.getDirective('TestDirective');
+
+      assert.deepEqual(directive, TestDirective, 'directive should match with TestDirective');
+    });
+
+    it('should return false when you try to get a directive that does not exists', () => {
+      var directive = directives.getDirective('FooDirective');
+
+      assert.isFalse(directive, 'directive should be false');
+    });
   });
 });
