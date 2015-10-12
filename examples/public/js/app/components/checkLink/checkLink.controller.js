@@ -17,6 +17,9 @@ function CheckLinkCtrl() {
 
         console.log('Inside showMessage', params);
       },
+      showMessage2: function(message) {
+        console.log('Holaaaaa', message);
+      },
       render: function() {
         return linkTemplate;
       }
