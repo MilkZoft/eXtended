@@ -104,12 +104,6 @@ describe('Dom', () => {
     });
   });
 
-  describe('#live', () => {
-    it('should be a function', () => {
-      assert.typeOf(dom.live, 'function', 'live should be a function');
-    });
-  });
-
   describe('#newElement', () => {
     it('should be a function', () => {
       assert.typeOf(dom.newElement, 'function', 'newElement should be a function');
