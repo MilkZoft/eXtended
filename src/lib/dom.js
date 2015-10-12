@@ -9,7 +9,6 @@ function Dom() {
   this.getElement = getElement;
   this.getElementNameAndType = getElementNameAndType;
   this.getElementType = getElementType;
-  this.live = live;
   this.newElement = newElement;
 
   return this;
@@ -40,7 +39,7 @@ function Dom() {
             if (!utils.inArray(attribute, analyzedAttributes)) {
               analyzedAttributes.push(attribute);
 
-              methodName = getMethodName(attribute);
+              methodName = utils.getMethodName(attribute);
               methodObj = tempMethods.shift();
 
               if (utils.isDefined(directiveClass[methodName])) {
@@ -63,6 +62,7 @@ function Dom() {
       } while (element = element.nextSibling);
     };
 
+    // Analyzing all the children elements
     utils.forEach(getChildren(html), function(child) {
       loop(child);
     }, true);
@@ -172,40 +172,6 @@ function Dom() {
    */
   function getElementType(elementName) {
     return getElement(elementName, true);
-  }
-
-  function getMethodName(attribute) {
-    var methodName = attribute.replace('{{', '').replace('}}', '').trim();
-    var methodsStr = methodName.substring(0, 5);
-    var newMethod;
-
-    if (methodsStr === 'this.') {
-      newMethod = methodName.substring(5).replace(', ', ',');
-      methodName = newMethod.substring(0, newMethod.indexOf('('));
-
-      return methodName;
-    }
-  }
-
-  function live(eventType, elementQuerySelector, fn) {
-    document.addEventListener(eventType, function(event) {
-      var querySelector = getElement(elementQuerySelector);
-      var el;
-      var index;
-
-      if (querySelector) {
-        el = event.target;
-        index = -1;
-
-        while (el && (index = Array.prototype.indexOf.call(querySelector, el) === -1)) {
-          el = el.parentElement;
-        }
-
-        if (index > -1) {
-          fn.call(el, event);
-        }
-      }
-    });
   }
 
   /**

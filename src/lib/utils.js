@@ -4,6 +4,7 @@ function Utils() {
   // Methods
   this.forEach = forEach;
   this.getJson = getJson;
+  this.getMethodName = getMethodName;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
   this.getStringFromJson = getStringFromJson;
@@ -55,6 +56,28 @@ function Utils() {
     }
 
     return str;
+  }
+
+  /**
+   * Return the name of a method from given attribute
+   *
+   * @param {string} elementName
+   * @returns {string} type of the element (id, class or tag)
+   * @protected
+   */
+  function getMethodName(attribute) {
+    var methodName = attribute.replace('{{', '').replace('}}', '').trim();
+    var methodsStr = methodName.substring(0, 5);
+    var newMethod;
+
+    if (methodsStr === 'this.') {
+      newMethod = methodName.substring(5).replace(', ', ',');
+      methodName = newMethod.substring(0, newMethod.indexOf('('));
+
+      return methodName;
+    }
+
+    return false;
   }
 
   /**
