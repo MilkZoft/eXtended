@@ -6,7 +6,6 @@ var utils = require('./utils');
 function Templates() {
   // Methods
   this.getCompiledHTML = getCompiledHTML;
-  this.getNewElementFromTemplate = getNewElementFromTemplate;
 
   return this;
 
@@ -18,8 +17,7 @@ function Templates() {
    * @returns {string} compiled HTML
    * @protected
    */
-  function getCompiledHTML(element, directiveProps, directiveClass) {
-    var html = element.outerHTML;
+  function getCompiledHTML(html, directiveProps, directiveClass) {
     var methodName;
     var methodsStr;
     var newMethod;
@@ -27,10 +25,11 @@ function Templates() {
     var params;
     var parsedParams;
     var propsStr;
-    var result = [];
+    var result = {};
+    var paramsArray = [];
     var variableName;
     var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
-    var directiveTarget = directiveProps.props.$target + ' ' + element.localName;
+    var methods = [];
 
     // If found at least 1 variable inside {{ ... }}
     utils.forEach(variablesMatch, function(variable) {
@@ -52,6 +51,8 @@ function Templates() {
         newMethod = variableName.substring(5).replace(', ', ',');
         methodName = newMethod.substring(0, newMethod.indexOf('('));
         params = newMethod.match(/\((.*?)\)/);
+
+        result[methodName] = [];
 
         // If has at least 1 parameter
         if (params.length > 0) {
@@ -83,31 +84,19 @@ function Templates() {
             }
 
             // Adding param to result array
-            result.push(param);
+            paramsArray.push(param);
           });
+
+          result[methodName] = paramsArray;
+          methods.push(result);
+          result = {};
+          paramsArray = [];
         }
       }
     });
 
     // Attaching events
-    dom.attachEvent(html, directiveTarget, directiveClass, methodName, result);
-
-    return getNewElementFromTemplate(html);
-  }
-
-  /**
-   * Converts HTML string to HTML Collection
-   *
-   * @param {string} html
-   * @returns {object} HTML Collection
-   * @protected
-   */
-  function getNewElementFromTemplate(html) {
-    var wrapper = dom.newElement('div');
-
-    wrapper.innerHTML = html;
-
-    return wrapper.firstChild;
+    return dom.attachEvents(html, directiveClass, methods);
   }
 }
 
