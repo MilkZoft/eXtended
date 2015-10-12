@@ -418,21 +418,6 @@ describe('Utils', () => {
     });
   });
 
-  describe('#log', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.log, 'function', 'log should be a function');
-    });
-
-    it('should log a message when is called', () => {
-      var logSpy = sinon.spy(console, 'log');
-
-      utils.log('Testing log');
-
-      assert.isTrue(logSpy.called, 'message should be logged');
-      logSpy.restore();
-    });
-  });
-
   describe('#merge', () => {
     it('should be a function', () => {
       assert.typeOf(utils.merge, 'function', 'merge should be a function');
