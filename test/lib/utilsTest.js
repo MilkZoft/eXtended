@@ -41,6 +41,30 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.getJson, 'function', 'getJson should be a function');
     });
+
+    it('should return a valid json from string', () => {
+      var json = '{"foo":"bar"}';
+      var expectedResult = {
+        foo: 'bar'
+      };
+      var actualResult = utils.getJson(json);
+
+      assert.deepEqual(actualResult, expectedResult, "actualResult should match expectedResult");
+    });
+  });
+
+  describe('#getMethodName', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.getMethodName, 'function', 'getMethodName should be a function');
+    });
+
+    it('should return the method name from string', () => {
+      var attribute = '{{ this.fooMethod() }}';
+      var expectedResult = 'fooMethod';
+      var actualResult = utils.getMethodName(attribute);
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
   });
 
   describe('#getRegex', () => {
@@ -118,6 +142,16 @@ describe('Utils', () => {
   describe('#getStringFromJson', () => {
     it('should be a function', () => {
       assert.typeOf(utils.getStringFromJson, 'function', 'getStringFromJson should be a function');
+    });
+
+    it('should return a string from a given json', () => {
+      var json = {
+        foo: 'bar'
+      };
+      var expectedResult = '{"foo":"bar"}';
+      var actualResult = utils.getStringFromJson(json);
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
     });
   });
 
@@ -298,6 +332,20 @@ describe('Utils', () => {
     it('should be a function', () => {
       assert.typeOf(utils.isJson, 'function', 'isJson should be a function');
     });
+
+    it('should validate if a given string is a valid json', () => {
+      var json = '{"foo":"bar"}';
+      var actualResult = utils.isJson(json);
+
+      assert.isTrue(actualResult, 'should be a valid json');
+    });
+
+    it('should validate if a given string is a not a valid json', () => {
+      var json = '{"foo":"bar"';
+      var actualResult = utils.isJson(json);
+
+      assert.isFalse(actualResult, 'should not be a valid json');
+    });
   });
 
   describe('#isNull', () => {
@@ -446,6 +494,14 @@ describe('Utils', () => {
   describe('#search', () => {
     it('should be a function', () => {
       assert.typeOf(utils.search, 'function', 'search should be a function');
+    });
+
+    it('should find a searched string', () => {
+      var string = 'Hello Foo';
+      var word = 'Foo';
+      var actualResult = utils.search(word, string);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
     });
   });
 });

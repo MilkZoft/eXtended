@@ -7,6 +7,22 @@ describe('Shared', () => {
     it('should be a function', () => {
       assert.typeOf(shared.getArguments, 'function', 'getArguments should be a function');
     });
+
+    it('should return arguments without the first argument', () => {
+      var args = [1, 2, 3];
+      var expectedResult = [2, 3];
+      var actualResult = shared.getArguments(args);
+
+      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
+    });
+
+    it('should return all arguments from template (controller)', () => {
+      var args = [1, 2, 3];
+      var expectedResult = [1, 2, 3];
+      var actualResult = shared.getArguments(args, true);
+
+      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
+    });
   });
 
   describe('#getDefaultAttrs', () => {
