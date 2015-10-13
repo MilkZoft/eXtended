@@ -50,7 +50,7 @@ function Templates() {
         // If found a method...
         newMethod = variableName.substring(5).replace(', ', ',');
         methodName = newMethod.substring(0, newMethod.indexOf('('));
-        params = newMethod.match(/\((.*?)\)/);
+        params = utils.getRegexMatch(newMethod, utils.getRegex('params'));
 
         result[methodName] = [];
 

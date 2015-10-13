@@ -94,7 +94,8 @@ function Utils() {
       selfClosingDirective: /<[^>]+?\/[ ]*>/,
       removeQuotes: /["']/g,
       curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
-      tagName: /<(\w+)\s+\w+.*?>/
+      tagName: /<(\w+)\s+\w+.*?>/,
+      params: /\((.*?)\)/
     };
 
     return REGEX[regex] || false;
@@ -109,7 +110,7 @@ function Utils() {
    * @protected
    */
   function getRegexMatch(element, regex) {
-    var match = element.match(new RegExp(regex));
+    var match = element.match(regex);
 
     return !isNull(match) ? match : false;
   }
