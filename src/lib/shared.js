@@ -22,20 +22,13 @@ function Shared() {
    * @protected
    */
   function getArguments(args, comingFromCompiledHTML) {
-    var elements = [];
-    var i = 0;
+    args = [].slice.call(args);
 
-    if (args.length > 0) {
-      for (i = 0; i < args.length; i++) {
-        elements.push(utils.getJson(args[i]));
-      }
-
-      if (!comingFromCompiledHTML) {
-        elements.shift();
-      }
+    if (args.length > 0 && !comingFromCompiledHTML) {
+      args.shift();
     }
 
-    return elements;
+    return args;
   }
 
   /**
