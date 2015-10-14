@@ -1,5 +1,6 @@
 'use strict';
 
+var shared = require('./shared');
 var utils = require('./utils');
 
 function Dom() {
@@ -9,6 +10,7 @@ function Dom() {
   this.getElement = getElement;
   this.getElementNameAndType = getElementNameAndType;
   this.getElementType = getElementType;
+  this.hasExEvent = hasExEvent;
   this.newElement = newElement;
 
   return this;
@@ -24,30 +26,40 @@ function Dom() {
    * @protected
    */
   function attachEvents(html, directiveClass, methods) {
-    var children = [];
-    var attribute;
-    var methodName;
     var analyzedAttributes = [];
+    var children = [];
+    var event;
+    var fn;
+    var hasEvent;
+    var methodName;
     var methodObj;
     var tempMethods = methods.slice(0);
     var loop = function(element) {
       do {
         if (element.nodeType === 1) {
-          if (element.hasAttribute('ex-click')) {
-            attribute = element.getAttribute('ex-click');
+          // Returns an array or false (0 = attribute & 1 = event)
+          hasEvent = hasExEvent(element);
 
-            if (!utils.inArray(attribute, analyzedAttributes)) {
-              analyzedAttributes.push(attribute);
+          if (hasEvent) {
+            if (!utils.exists(hasEvent[0], analyzedAttributes)) {
+              analyzedAttributes.push(hasEvent[0]);
 
-              methodName = utils.getMethodName(attribute);
+              event = hasEvent[1];
+              methodName = shared.getMethodName(hasEvent[0]);
               methodObj = tempMethods.shift();
 
               if (utils.isDefined(directiveClass[methodName])) {
                 // This IIFE is to send the values over the closoure
                 (function (methodName, methodObj) {
-                  element.addEventListener('click', function(e) {
+                  fn = function(e) {
                     directiveClass[methodName].apply(undefined, methodObj[methodName]);
-                  }, false);
+                  };
+
+                  if (element.addEventListener) {
+                    element.addEventListener(event, fn, false);
+                  } else {
+                    element.attachEvent(event, fn);
+                  }
                 })(methodName, methodObj);
               }
             }
@@ -80,7 +92,6 @@ function Dom() {
   function getChildren(html) {
     var wrapper = newElement('div');
     wrapper.innerHTML = html;
-
     return wrapper.children;
   }
 
@@ -100,7 +111,7 @@ function Dom() {
       '#': 'id'
     };
 
-    return !utils.isDefined(getType) ? query : utils.inObject(type, types) ? types[type] : 'tag';
+    return !utils.isDefined(getType) ? query : utils.exists(type, types) ? types[type] : 'tag';
   }
 
   /**
@@ -172,6 +183,46 @@ function Dom() {
    */
   function getElementType(elementName) {
     return getElement(elementName, true);
+  }
+
+  /**
+   * Return an array with the attribute and the current event
+   *
+   * @param {object} element
+   * @returns {array} attribute and event
+   * @protected
+   */
+  function hasExEvent(element) {
+    var exEvents = [
+      'ex-click',
+      'ex-change',
+      'ex-mouseover',
+      'ex-mouseout',
+      'ex-keydown'
+    ];
+    var jsEvents = [
+      'onclick',
+      'change',
+      'mouseover',
+      'mouseout',
+      'keydown'
+    ];
+    var event;
+    var i;
+
+    for (i = 0; i < exEvents.length; i++) {
+      if (element.hasAttribute(exEvents[i])) {
+        event = jsEvents[i];
+
+        if (element.addEventListener && event === 'onclick') {
+          event = 'click';
+        }
+
+        return [element.getAttribute(exEvents[i]), event];
+      }
+    }
+
+    return false;
   }
 
   /**
