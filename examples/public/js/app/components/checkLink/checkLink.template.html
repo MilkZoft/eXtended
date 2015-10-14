@@ -1,1 +1,18 @@
-<a href="#" ex-click="{{ this.showMessage('hola', 1, this.props.$url) }}">{{this.props.$content}}</a>
+<div class="links">
+  <a href="#">Prueba</a>
+  <div class="other">
+    <span>
+      <a href="#" ex-click="{{ this.showMessage('hola', 1, this.props.$url) }}">{{this.props.$content}}</a>
+    </span>
+
+        <strong>
+      <a href="#" ex-click="{{ this.showMessage2('adios') }}">{{this.props.$content}}</a>
+    </strong>
+  </div>
+</div>
+
+<div class="otros" ex-click="{{ this.showMessage2('Funciona perfecto') }}">
+  Holaaaa desde otros
+
+  <input id="text" ex-keydown="{{ this.showMessage2('En el keydown') }}" />
+</div>

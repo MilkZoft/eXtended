@@ -3,6 +3,8 @@
 
   var eX = require('./../../../src/eXtended');
 
+  eX.startPerformance();
+
   var CheckLink = require('./app/components/checkLink/checkLink.controller');
 
   var h1 = eX.create('h1#myId.myClass', {
@@ -24,4 +26,5 @@
   eX.render('body', h1, input, span, p);
 
   CheckLink.run();
+  eX.getPerformance();
 })();

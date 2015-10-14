@@ -9,7 +9,9 @@ function Shared() {
   // Methods
   this.getArguments = getArguments;
   this.getDefaultAttrs = getDefaultAttrs;
+  this.getMethodName = getMethodName;
   this.getProperty = getProperty;
+  this.isSelfClosingDirective = isSelfClosingDirective;
   this.isSpecialTag = isSpecialTag;
 
   return this;
@@ -22,20 +24,13 @@ function Shared() {
    * @protected
    */
   function getArguments(args, comingFromCompiledHTML) {
-    var elements = [];
-    var i = 0;
+    args = utils.getArray(args);
 
-    if (args.length > 0) {
-      for (i = 0; i < args.length; i++) {
-        elements.push(utils.getJson(args[i]));
-      }
-
-      if (!comingFromCompiledHTML) {
-        elements.shift();
-      }
+    if (args.length > 0 && !comingFromCompiledHTML) {
+      args.shift();
     }
 
-    return elements;
+    return args;
   }
 
   /**
@@ -64,6 +59,28 @@ function Shared() {
   }
 
   /**
+   * Return the name of a method from given attribute
+   *
+   * @param {string} elementName
+   * @returns {string} type of the element (id, class or tag)
+   * @protected
+   */
+  function getMethodName(attribute) {
+    var methodName = attribute.replace('{{', '').replace('}}', '').trim();
+    var methodsStr = methodName.substring(0, 5);
+    var newMethod;
+
+    if (methodsStr === 'this.') {
+      newMethod = methodName.substring(5).replace(', ', ',');
+      methodName = newMethod.substring(0, newMethod.indexOf('('));
+
+      return methodName;
+    }
+
+    return false;
+  }
+
+  /**
    * Short cuts for some properties
    *
    * @param {string} property
@@ -82,6 +99,26 @@ function Shared() {
   }
 
   /**
+   * Returns true if an element is a self closing directive
+   *
+   * @param {string} element
+   * @returns {boolean} true if is a self closing directive
+   * @protected
+   */
+  function isSelfClosingDirective(element) {
+    var match = utils.getRegexMatch(element, utils.getRegex('selfClosingDirective'));
+    var directiveName;
+
+    if (match) {
+      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
+
+      return directiveName;
+    }
+
+    return false;
+  }
+
+  /**
    * Validates if a given tag is a special tag.
    *
    * @param {string} tag
@@ -90,7 +127,7 @@ function Shared() {
    * @protected
    */
   function isSpecialTag(tag, props) {
-    if (utils.inArray(tag, SPECIAL_TAGS) && props) {
+    if (utils.exists(tag, SPECIAL_TAGS) && props) {
       return getDefaultAttrs(tag, props);
     }
 

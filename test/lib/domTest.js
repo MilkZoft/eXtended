@@ -3,9 +3,9 @@
 var dom = require('../../src/lib/dom');
 
 describe('Dom', () => {
-  describe('#attachEvent', () => {
+  describe('#attachEvents', () => {
     it('should be a function', () => {
-      assert.typeOf(dom.attachEvent, 'function', 'attachEvent should be a function');
+      assert.typeOf(dom.attachEvents, 'function', 'attachEvents should be a function');
     });
   });
 
@@ -104,9 +104,9 @@ describe('Dom', () => {
     });
   });
 
-  describe('#live', () => {
+  describe('#hasExEvent', () => {
     it('should be a function', () => {
-      assert.typeOf(dom.live, 'function', 'live should be a function');
+      assert.typeOf(dom.hasExEvent, 'function', 'hasExEvent should be a function');
     });
   });
 

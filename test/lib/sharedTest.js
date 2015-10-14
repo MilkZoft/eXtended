@@ -3,9 +3,28 @@
 var shared = require('../../src/lib/shared');
 
 describe('Shared', () => {
+  var directiveWithAttributes = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
+  var selfClosingDirective = '<TestDirective />';
+
   describe('#getArguments', () => {
     it('should be a function', () => {
       assert.typeOf(shared.getArguments, 'function', 'getArguments should be a function');
+    });
+
+    it('should return arguments without the first argument', () => {
+      var args = [1, 2, 3];
+      var expectedResult = [2, 3];
+      var actualResult = shared.getArguments(args);
+
+      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
+    });
+
+    it('should return all arguments from template (controller)', () => {
+      var args = [1, 2, 3];
+      var expectedResult = [1, 2, 3];
+      var actualResult = shared.getArguments(args, true);
+
+      assert.deepEqual(actualResult, expectedResult, 'actualResult should match expectedResult');
     });
   });
 
@@ -44,6 +63,20 @@ describe('Shared', () => {
     });
   });
 
+  describe('#getMethodName', () => {
+    it('should be a function', () => {
+      assert.typeOf(shared.getMethodName, 'function', 'getMethodName should be a function');
+    });
+
+    it('should return the method name from string', () => {
+      var attribute = '{{ this.fooMethod() }}';
+      var expectedResult = 'fooMethod';
+      var actualResult = shared.getMethodName(attribute);
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+  });
+
   describe('#getProperty', () => {
     it('should be a function', () => {
       assert.typeOf(shared.getProperty, 'function', 'getProperty should be a function');
@@ -61,6 +94,24 @@ describe('Shared', () => {
       var expectedResult = 'foo';
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+  });
+
+  describe('#isSelfClosingDirective', () => {
+    it('should be a function', () => {
+      assert.typeOf(shared.isSelfClosingDirective, 'function', 'isSelfClosingDirective should be a function');
+    });
+
+    it('should validate if a given string is a Self Closing Directive', () => {
+      var actualResult = !!shared.isSelfClosingDirective(selfClosingDirective);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a directive with attributes is not a Self Closing Directive', () => {
+      var actualResult = !!shared.isSelfClosingDirective(directiveWithAttributes);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 

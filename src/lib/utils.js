@@ -1,23 +1,14 @@
 'use strict';
 
 function Utils() {
-  // Constants
-  const REGEX = {
-    directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
-    selfClosingDirective: /<[^>]+?\/[ ]*>/,
-    removeQuotes: /["']/g,
-    curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
-    tagName: /<(\w+)\s+\w+.*?>/
-  };
-
   // Methods
+  this.exists = exists;
   this.forEach = forEach;
+  this.getArray = getArray;
   this.getJson = getJson;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
   this.getStringFromJson = getStringFromJson;
-  this.inArray = inArray;
-  this.inObject = inObject;
   this.isArray = isArray;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
@@ -25,13 +16,27 @@ function Utils() {
   this.isJson = isJson;
   this.isNull = isNull;
   this.isObject = isObject;
-  this.isSelfClosingDirective = isSelfClosingDirective;
   this.isString = isString;
-  this.log = log;
   this.merge = merge;
   this.search = search;
 
   return this;
+
+  /**
+   * Validates if an item exists into an object or array.
+   *
+   * @param {string} item
+   * @param {object} obj
+   * @returns {boolean} true if the item exists, false if not.
+   * @protected
+   */
+  function exists(item, obj) {
+    if (obj instanceof Array) {
+      return obj.indexOf(item) >= 0;
+    }
+
+    return isDefined(obj[item]);
+  }
 
   /**
    * Easy way to iterate over arrays and objects.
@@ -41,16 +46,26 @@ function Utils() {
    * @protected
    */
   function forEach(items, callback, isHTMLCollection) {
-    if (isArray(items)) {
-      for (var i = 0; i < items.length; i++) {
+    var i;
+
+    if (isArray(items) || isHTMLCollection) {
+      for (i = 0; i < items.length; i++) {
         callback(items[i]);
       }
-    } else if (callback === true) {
-      console.log(items);
-      return [].slice.call(items);
     } else {
       Object.keys(items).forEach(callback);
     }
+  }
+
+  /**
+   * Get only the array items from an array-object
+   *
+   * @param {array-object} items
+   * @returns {array} items
+   * @protected
+   */
+  function getArray(items) {
+    return [].slice.call(items);
   }
 
   /**
@@ -76,6 +91,16 @@ function Utils() {
    * @protected
    */
   function getRegex(regex) {
+    // Constants
+    const REGEX = {
+      directive: /(<(.+)(?:\s([^>]+))*>)(.*)<\/\2>/,
+      selfClosingDirective: /<[^>]+?\/[ ]*>/,
+      removeQuotes: /["']/g,
+      curlyBrackets: /\{\{(\s*?.*?)*?\}\}/g,
+      tagName: /<(\w+)\s+\w+.*?>/,
+      params: /\((.*?)\)/
+    };
+
     return REGEX[regex] || false;
   }
 
@@ -88,7 +113,7 @@ function Utils() {
    * @protected
    */
   function getRegexMatch(element, regex) {
-    var match = element.match(new RegExp(regex));
+    var match = element.match(regex);
 
     return !isNull(match) ? match : false;
   }
@@ -102,30 +127,6 @@ function Utils() {
    */
   function getStringFromJson(obj) {
     return JSON.stringify(obj);
-  }
-
-  /**
-   * Validates if an item exists into an array.
-   *
-   * @param {string} item
-   * @param {array} obj
-   * @returns {boolean} true if the item exists, false if not.
-   * @protected
-   */
-  function inArray(item, array) {
-    return array instanceof Array && array.indexOf(item) >= 0;
-  }
-
-  /**
-   * Validates if an item exists into an object.
-   *
-   * @param {string} item
-   * @param {object} obj
-   * @returns {boolean} true if the item exists, false if not.
-   * @protected
-   */
-  function inObject(item, obj) {
-    return typeof obj[item] !== 'undefined';
   }
 
   /**
@@ -150,9 +151,9 @@ function Utils() {
   function isDefined(value, isNot) {
     if (typeof isNot === 'undefined') {
       return typeof value !== 'undefined';
-    } else {
-      return typeof value !== 'undefined' && value !== isNot;
     }
+
+    return typeof value !== 'undefined' && value !== isNot;
   }
 
   /**
@@ -163,7 +164,7 @@ function Utils() {
    * @protected
    */
   function isDirective(element) {
-    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
+    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
       return true;
     } else if (isString(element)) {
       return !!getRegexMatch(element, getRegex('selfClosingDirective'));
@@ -227,26 +228,6 @@ function Utils() {
   }
 
   /**
-   * Returns true if an element is a self closing directive
-   *
-   * @param {string} element
-   * @returns {boolean} true if is a self closing directive
-   * @protected
-   */
-  function isSelfClosingDirective(element) {
-    var match = getRegexMatch(element, getRegex('selfClosingDirective'));
-    var directiveName;
-
-    if (match) {
-      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
-
-      return directiveName;
-    }
-
-    return false;
-  }
-
-  /**
    * Validates if a value is String
    *
    * @param {string} value
@@ -258,17 +239,6 @@ function Utils() {
   }
 
   /**
-   * Logs a message.
-   *
-   * @param {string} message
-   * @returns {void}
-   * @internal
-   */
-  function log(message) {
-    console.log('eXtended:', message);
-  }
-
-  /**
    * Easy way to merge two objects.
    *
    * @param {object} obj1
@@ -277,17 +247,19 @@ function Utils() {
    * @protected
    */
   function merge(obj1, obj2) {
+    var key;
+
     if (isFunction(Object.assign)) {
       return Object.assign(obj1, obj2);
-    } else {
-      for (var key in obj2) {
-        if (obj2.hasOwnProperty(key)) {
-          obj1[key] = obj2[key];
-        }
-      }
-
-      return obj1;
     }
+
+    for (key in obj2) {
+      if (obj2.hasOwnProperty(key)) {
+        obj1[key] = obj2[key];
+      }
+    }
+
+    return obj1;
   }
 
   /**
@@ -299,7 +271,7 @@ function Utils() {
    * @protected
    */
   function search(word, string) {
-    return string.search(word) !== -1;
+    return isDefined(string) && string.search(word) !== -1;
   }
 }
 

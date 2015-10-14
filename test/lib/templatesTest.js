@@ -15,17 +15,13 @@ describe('Templates', () => {
           $content: 'Foo'
         }
       };
-      var html = templates.getNewElementFromTemplate('<a href="{{ this.props.$url }}">{{ this.props.$content }}</a>');
+      var html = '<a href="{{ this.props.$url }}">{{ this.props.$content }}</a>';
       var expectedResult = '<a href="http://www.testurl.com">Foo</a>';
-      var actualResult = templates.getCompiledHTML(html, directiveProps).outerHTML;
+      var actualResult = templates.getCompiledHTML(html, directiveProps);
+
+      actualResult = actualResult[0].outerHTML;
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
-    });
-  });
-
-  describe('#getNewElementFromTemplate', () => {
-    it('should be a function', () => {
-      assert.typeOf(templates.getNewElementFromTemplate, 'function', 'getNewElementFromTemplate should be a function');
     });
   });
 });

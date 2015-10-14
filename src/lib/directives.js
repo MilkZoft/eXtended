@@ -1,5 +1,6 @@
 'use strict';
 
+var shared = require('./shared');
 var utils = require('./utils');
 
 function Directives() {
@@ -62,7 +63,7 @@ function Directives() {
     var attributes = {};
     var attributesSplit;
     var directiveMatch;
-    var selfClosingDirective = utils.isSelfClosingDirective(element);
+    var selfClosingDirective = shared.isSelfClosingDirective(element);
     var values;
 
     directiveMatch = !selfClosingDirective ? utils.getRegexMatch(element, utils.getRegex('directive')) : [];

@@ -1,14 +1,16 @@
 'use strict';
 
+var shared = require('./shared');
 var utils = require('./utils');
 
 function Dom() {
   // Methods
-  this.attachEvent = attachEvent;
+  this.attachEvents = attachEvents;
+  this.getChildren = getChildren;
   this.getElement = getElement;
   this.getElementNameAndType = getElementNameAndType;
-  this.getElementType = getElementType
-  this.live = live;
+  this.getElementType = getElementType;
+  this.hasExEvent = hasExEvent;
   this.newElement = newElement;
 
   return this;
@@ -23,12 +25,74 @@ function Dom() {
    * @param {array} params
    * @protected
    */
-  function attachEvent(code, directiveTarget, directiveClass, methodName, params) {
-    if (utils.search('ex-click', code)) {
-      live('click', directiveTarget, function(event) {
-        directiveClass[methodName].apply(undefined, params);
-      });
-    }
+  function attachEvents(html, directiveClass, methods) {
+    var analyzedAttributes = [];
+    var children = [];
+    var event;
+    var fn;
+    var hasEvent;
+    var methodName;
+    var methodObj;
+    var tempMethods = methods.slice(0);
+    var loop = function(element) {
+      do {
+        if (element.nodeType === 1) {
+          // Returns an array or false (0 = attribute & 1 = event)
+          hasEvent = hasExEvent(element);
+
+          if (hasEvent) {
+            if (!utils.exists(hasEvent[0], analyzedAttributes)) {
+              analyzedAttributes.push(hasEvent[0]);
+
+              event = hasEvent[1];
+              methodName = shared.getMethodName(hasEvent[0]);
+              methodObj = tempMethods.shift();
+
+              if (utils.isDefined(directiveClass[methodName])) {
+                // This IIFE is to send the values over the closoure
+                (function (methodName, methodObj) {
+                  fn = function(e) {
+                    directiveClass[methodName].apply(undefined, methodObj[methodName]);
+                  };
+
+                  if (element.addEventListener) {
+                    element.addEventListener(event, fn, false);
+                  } else {
+                    element.attachEvent(event, fn);
+                  }
+                })(methodName, methodObj);
+              }
+            }
+          }
+
+          children.push(element);
+        }
+
+        if (element.hasChildNodes()) {
+          loop(element.firstChild);
+        }
+      } while (element = element.nextSibling);
+    };
+
+    // Analyzing all the children elements
+    utils.forEach(getChildren(html), function(child) {
+      loop(child);
+    }, true);
+
+    return children;
+  }
+
+  /**
+   * Get the element target
+   *
+   * @param {string} html
+   * @returns {object} HTML Collection
+   * @protected
+   */
+  function getChildren(html) {
+    var wrapper = newElement('div');
+    wrapper.innerHTML = html;
+    return wrapper.children;
   }
 
   /**
@@ -47,7 +111,7 @@ function Dom() {
       '#': 'id'
     };
 
-    return !utils.isDefined(getType) ? query : utils.inObject(type, types) ? types[type] : 'tag';
+    return !utils.isDefined(getType) ? query : utils.exists(type, types) ? types[type] : 'tag';
   }
 
   /**
@@ -86,15 +150,17 @@ function Dom() {
 
     // Returns the id and class values for an element
     var getIdAndClassValues = function(hasId, hasClasses, element) {
+      var el = element;
+
       if (hasId.length > 1 && hasClasses.length >= 1) {
-        element = getElementObject(
+        el = getElementObject(
           element,
           hasId[0],
           hasId[1].substring(0, hasId[1].indexOf('.')),
           hasClasses
         );
       } else if (hasId.length === 2 || hasClasses.length >= 1) {
-        element = getElementObject(
+        el = getElementObject(
           element,
           hasId.length === 2 ? hasId[0] : name,
           hasId.length === 2 ? hasId[1] : false,
@@ -102,7 +168,7 @@ function Dom() {
         );
       }
 
-      return element;
+      return el;
     };
 
     return getIdAndClassValues(hasId, hasClasses, element);
@@ -119,24 +185,44 @@ function Dom() {
     return getElement(elementName, true);
   }
 
-  function live(eventType, elementQuerySelector, fn) {
-    console.log(elementQuerySelector, fn);
-    document.addEventListener(eventType, function(event) {
-      var querySelector = getElement(elementQuerySelector);
-      console.log(querySelector);
-      if (querySelector) {
-        var el = event.target;
-        var index = -1;
+  /**
+   * Return an array with the attribute and the current event
+   *
+   * @param {object} element
+   * @returns {array} attribute and event
+   * @protected
+   */
+  function hasExEvent(element) {
+    var exEvents = [
+      'ex-click',
+      'ex-change',
+      'ex-mouseover',
+      'ex-mouseout',
+      'ex-keydown'
+    ];
+    var jsEvents = [
+      'onclick',
+      'change',
+      'mouseover',
+      'mouseout',
+      'keydown'
+    ];
+    var event;
+    var i;
 
-        while (el && ((index = Array.prototype.indexOf.call(querySelector, el)) === -1)) {
-          el = el.parentElement;
+    for (i = 0; i < exEvents.length; i++) {
+      if (element.hasAttribute(exEvents[i])) {
+        event = jsEvents[i];
+
+        if (element.addEventListener && event === 'onclick') {
+          event = 'click';
         }
 
-        if (index > -1) {
-          fn.call(el, event);
-        }
+        return [element.getAttribute(exEvents[i]), event];
       }
-    });
+    }
+
+    return false;
   }
 
   /**
