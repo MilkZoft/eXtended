@@ -2,14 +2,13 @@
 
 function Utils() {
   // Methods
+  this.exists = exists;
   this.forEach = forEach;
+  this.getArray = getArray;
   this.getJson = getJson;
-  this.getMethodName = getMethodName;
   this.getRegex = getRegex;
   this.getRegexMatch = getRegexMatch;
   this.getStringFromJson = getStringFromJson;
-  this.inArray = inArray;
-  this.inObject = inObject;
   this.isArray = isArray;
   this.isDefined = isDefined;
   this.isDirective = isDirective;
@@ -17,12 +16,27 @@ function Utils() {
   this.isJson = isJson;
   this.isNull = isNull;
   this.isObject = isObject;
-  this.isSelfClosingDirective = isSelfClosingDirective;
   this.isString = isString;
   this.merge = merge;
   this.search = search;
 
   return this;
+
+  /**
+   * Validates if an item exists into an object or array.
+   *
+   * @param {string} item
+   * @param {object} obj
+   * @returns {boolean} true if the item exists, false if not.
+   * @protected
+   */
+  function exists(item, obj) {
+    if (obj instanceof Array) {
+      return obj.indexOf(item) >= 0;
+    }
+
+    return isDefined(obj[item]);
+  }
 
   /**
    * Easy way to iterate over arrays and objects.
@@ -44,6 +58,17 @@ function Utils() {
   }
 
   /**
+   * Get only the array items from an array-object
+   *
+   * @param {array-object} items
+   * @returns {array} items
+   * @protected
+   */
+  function getArray(items) {
+    return [].slice.call(items);
+  }
+
+  /**
    * Get Json from string
    *
    * @param {string} str
@@ -56,28 +81,6 @@ function Utils() {
     }
 
     return str;
-  }
-
-  /**
-   * Return the name of a method from given attribute
-   *
-   * @param {string} elementName
-   * @returns {string} type of the element (id, class or tag)
-   * @protected
-   */
-  function getMethodName(attribute) {
-    var methodName = attribute.replace('{{', '').replace('}}', '').trim();
-    var methodsStr = methodName.substring(0, 5);
-    var newMethod;
-
-    if (methodsStr === 'this.') {
-      newMethod = methodName.substring(5).replace(', ', ',');
-      methodName = newMethod.substring(0, newMethod.indexOf('('));
-
-      return methodName;
-    }
-
-    return false;
   }
 
   /**
@@ -124,30 +127,6 @@ function Utils() {
    */
   function getStringFromJson(obj) {
     return JSON.stringify(obj);
-  }
-
-  /**
-   * Validates if an item exists into an array.
-   *
-   * @param {string} item
-   * @param {array} obj
-   * @returns {boolean} true if the item exists, false if not.
-   * @protected
-   */
-  function inArray(item, array) {
-    return array instanceof Array && array.indexOf(item) >= 0;
-  }
-
-  /**
-   * Validates if an item exists into an object.
-   *
-   * @param {string} item
-   * @param {object} obj
-   * @returns {boolean} true if the item exists, false if not.
-   * @protected
-   */
-  function inObject(item, obj) {
-    return typeof obj[item] !== 'undefined';
   }
 
   /**
@@ -246,26 +225,6 @@ function Utils() {
    */
   function isObject(obj) {
     return obj instanceof Object && !isArray(obj) && typeof obj !== 'function';
-  }
-
-  /**
-   * Returns true if an element is a self closing directive
-   *
-   * @param {string} element
-   * @returns {boolean} true if is a self closing directive
-   * @protected
-   */
-  function isSelfClosingDirective(element) {
-    var match = getRegexMatch(element, getRegex('selfClosingDirective'));
-    var directiveName;
-
-    if (match) {
-      directiveName = match[0].replace('<', '').replace('/', '').replace('>', '').trim();
-
-      return directiveName;
-    }
-
-    return false;
   }
 
   /**

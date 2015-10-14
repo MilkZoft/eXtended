@@ -87,6 +87,7 @@ function Templates() {
             paramsArray.push(param);
           });
 
+          // Saving params
           result[methodName] = paramsArray;
           methods.push(result);
           result = {};
