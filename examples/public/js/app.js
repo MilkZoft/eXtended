@@ -16,9 +16,6 @@
     value: 'Username'
   });
 
-  eX.getPerformance();
-
-  eX.startPerformance();
   var span = eX.create('span', '.username', 'Write your username');
   var link = eX.create('link', 'public/css/mediaqueries/desktop.css');
   var script = eX.create('script', 'public/js/script.js');
