@@ -2,6 +2,7 @@ var gulp = require('gulp');
 
 // Tasks
 gulp.task('browserify', require('./gulp/browserify'));
+gulp.task('compress', require('./gulp/compress'));
 gulp.task('lint', require('./gulp/eslint'));
 gulp.task('karma', require('./gulp/karma'));
 
@@ -18,5 +19,5 @@ gulp.task('pre-push', ['test']);
 // Specific Tasks
 gulp.task('test', ['karma']);
 gulp.task('analyze', ['lint']);
-gulp.task('build', ['browserify']);
+gulp.task('build', ['browserify', 'compress']);
 gulp.task('default', ['build']);
