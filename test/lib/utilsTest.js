@@ -4,8 +4,50 @@ var utils = require('../../src/lib/utils');
 
 describe('Utils', () => {
   var directiveWithAttributes = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
-  var selfClosingDirective = '<TestDirective />';
   var invalidDirective = '<TestDirective>';
+  var selfClosingDirective = '<TestDirective />';
+
+  describe('#exists', () => {
+    it('should be a function', () => {
+      assert.typeOf(utils.exists, 'function', 'exists should be a function');
+    });
+
+    it('should validate if an item is in array', () => {
+      var array = ['foo', 'bar', 'zas'];
+      var actualResult = utils.exists('bar', array);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if an item is not in array', () => {
+      var array = ['foo', 'bar', 'zas'];
+      var actualResult = utils.exists('fuu', array);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
+    });
+
+    it('should validate if an item is in object', () => {
+      var obj = {
+        foo: 1,
+        bar: 2,
+        zas: 3
+      };
+      var actualResult = utils.exists('foo', obj);
+
+      assert.isTrue(actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if an item is not in object', () => {
+      var obj = {
+        foo: 1,
+        bar: 2,
+        zas: 3
+      };
+      var actualResult = utils.exists('fuu', obj);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
+    });
+  });
 
   describe('#forEach', () => {
     it('should be a function', () => {
@@ -50,20 +92,6 @@ describe('Utils', () => {
       var actualResult = utils.getJson(json);
 
       assert.deepEqual(actualResult, expectedResult, "actualResult should match expectedResult");
-    });
-  });
-
-  describe('#getMethodName', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.getMethodName, 'function', 'getMethodName should be a function');
-    });
-
-    it('should return the method name from string', () => {
-      var attribute = '{{ this.fooMethod() }}';
-      var expectedResult = 'fooMethod';
-      var actualResult = utils.getMethodName(attribute);
-
-      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
     });
   });
 
@@ -152,54 +180,6 @@ describe('Utils', () => {
       var actualResult = utils.getStringFromJson(json);
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
-    });
-  });
-
-  describe('#inArray', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.inArray, 'function', 'inArray should be a function');
-    });
-
-    it('should validate if an item is in array', () => {
-      var array = ['foo', 'bar', 'zas'];
-      var actualResult = utils.inArray('bar', array);
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if an item is not in array', () => {
-      var array = ['foo', 'bar', 'zas'];
-      var actualResult = utils.inArray('fuu', array);
-
-      assert.isFalse(actualResult, 'actualResult should be false');
-    });
-  });
-
-  describe('#inObject', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.inObject, 'function', 'inObject should be a function');
-    });
-
-    it('should validate if an item is in object', () => {
-      var obj = {
-        foo: 1,
-        bar: 2,
-        zas: 3
-      };
-      var actualResult = utils.inObject('foo', obj);
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if an item is not in object', () => {
-      var obj = {
-        foo: 1,
-        bar: 2,
-        zas: 3
-      };
-      var actualResult = utils.inObject('fuu', obj);
-
-      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 
@@ -405,24 +385,6 @@ describe('Utils', () => {
       };
 
       assert.isFalse(utils.isObject(value), 'Function should not be an Object');
-    });
-  });
-
-  describe('#isSelfClosingDirective', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.isSelfClosingDirective, 'function', 'isSelfClosingDirective should be a function');
-    });
-
-    it('should validate if a given string is a Self Closing Directive', () => {
-      var actualResult = !!utils.isSelfClosingDirective(selfClosingDirective);
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if a directive with attributes is not a Self Closing Directive', () => {
-      var actualResult = !!utils.isSelfClosingDirective(directiveWithAttributes);
-
-      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 

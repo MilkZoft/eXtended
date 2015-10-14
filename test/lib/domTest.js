@@ -104,6 +104,12 @@ describe('Dom', () => {
     });
   });
 
+  describe('#hasExEvent', () => {
+    it('should be a function', () => {
+      assert.typeOf(dom.hasExEvent, 'function', 'hasExEvent should be a function');
+    });
+  });
+
   describe('#newElement', () => {
     it('should be a function', () => {
       assert.typeOf(dom.newElement, 'function', 'newElement should be a function');
