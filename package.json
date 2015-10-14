@@ -22,6 +22,7 @@
     "gulp": "latest",
     "gulp-eslint": "latest",
     "gulp-karma": "latest",
+    "gulp-uglify": "latest",
     "gulp-watch": "latest",
     "karma": "latest",
     "karma-browserify": "latest",
@@ -33,6 +34,7 @@
     "mocha": "latest",
     "sinon": "latest",
     "stringify": "latest",
+    "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
   },
   "browserify-shim": {
