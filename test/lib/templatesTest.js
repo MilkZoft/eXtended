@@ -9,7 +9,7 @@ describe('Templates', () => {
     });
 
     it('should return compiled HTML', () => {
-      /*var directiveProps = {
+      var directiveProps = {
         props: {
           $url: 'http://www.testurl.com',
           $content: 'Foo'
@@ -17,9 +17,11 @@ describe('Templates', () => {
       };
       var html = '<a href="{{ this.props.$url }}">{{ this.props.$content }}</a>';
       var expectedResult = '<a href="http://www.testurl.com">Foo</a>';
-      var actualResult = templates.getCompiledHTML(html, directiveProps).outerHTML;
+      var actualResult = templates.getCompiledHTML(html, directiveProps);
 
-      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');*/
+      actualResult = actualResult[0].outerHTML;
+
+      assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
     });
   });
 });
