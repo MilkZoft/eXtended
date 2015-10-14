@@ -11,11 +11,10 @@ function Performance() {
   return this;
 
   /**
-   * Get arguments from arguments array
+   * Get the timeEnd of the performance
    *
-   * @param {array} args
-   * @returns {array} elements
-   * @protected
+   * @returns {console} timeEnd
+   * @public
    */
   function getPerformance() {
     console.timeEnd('Benchmark ' + times);
@@ -23,12 +22,10 @@ function Performance() {
   }
 
   /**
-   * Get default attributes for special tags (like link or script).
+   * Set the time of the performance.
    *
-   * @param {string} element
-   * @param {string} url
-   * @returns {object} default properties
-   * @protected
+   * @returns {console} time
+   * @public
    */
   function startPerformance() {
     console.time('Benchmark ' + times);
