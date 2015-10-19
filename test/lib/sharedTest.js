@@ -5,6 +5,7 @@ var shared = require('../../src/lib/shared');
 describe('Shared', () => {
   var directiveWithAttributes = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
   var selfClosingDirective = '<TestDirective />';
+  var invalidDirective = '<TestDirective>';
 
   describe('#getArguments', () => {
     it('should be a function', () => {
@@ -69,9 +70,10 @@ describe('Shared', () => {
     });
 
     it('should return the method name from string', () => {
-      var attribute = '{{ this.fooMethod() }}';
+      var attribute = '{{ vmFoo.fooMethod() }}';
       var expectedResult = 'fooMethod';
-      var actualResult = shared.getMethodName(attribute);
+      var vm = 'vmFoo';
+      var actualResult = shared.getMethodName(attribute, vm);
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
     });
@@ -94,6 +96,30 @@ describe('Shared', () => {
       var expectedResult = 'foo';
 
       assert.strictEqual(actualResult, expectedResult, 'actualResult should be equal to expectedResult');
+    });
+  });
+
+  describe('#isDirective', () => {
+    it('should be a function', () => {
+      assert.typeOf(shared.isDirective, 'function', 'isDirective should be a function');
+    });
+
+    it('should validate if a given string is a self closing directive', () => {
+      var actualResult = shared.isDirective(selfClosingDirective);
+
+      assert.isTrue(!!actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a given string is a directive with attributes', () => {
+      var actualResult = shared.isDirective(directiveWithAttributes);
+
+      assert.isTrue(!!actualResult, 'actualResult should be true');
+    });
+
+    it('should validate if a given string is not a valid directive', () => {
+      var actualResult = shared.isDirective(invalidDirective);
+
+      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 

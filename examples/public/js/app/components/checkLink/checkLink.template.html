@@ -2,17 +2,17 @@
   <a href="#">Prueba</a>
   <div class="other">
     <span>
-      <a href="#" ex-click="{{ this.showMessage('hola', 1, this.props.$url) }}">{{this.props.$content}}</a>
+      <a href="#" ex-click="{{ vmCheckLink.showMessage('hola', 1, vmCheckLink.props.url) }}">{{vmCheckLink.props.content}}</a>
     </span>
 
         <strong>
-      <a href="#" ex-click="{{ this.showMessage2('adios') }}">{{this.props.$content}}</a>
+      <a href="#" ex-click="{{ vmCheckLink.showMessage2('adios') }}">{{vmCheckLink.props.content}}</a>
     </strong>
   </div>
 </div>
 
-<div class="otros" ex-click="{{ this.showMessage2('Funciona perfecto') }}">
+<div class="otros" ex-click="{{ vmCheckLink.showMessage2('Funciona perfecto') }}">
   Holaaaa desde otros
 
-  <input id="text" ex-keydown="{{ this.showMessage2('En el keydown') }}" />
+  <input id="text" ex-keydown="{{ vmCheckLink.showMessage2('En el keydown') }}" />
 </div>

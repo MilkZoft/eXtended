@@ -11,6 +11,7 @@ function Shared() {
   this.getDefaultAttrs = getDefaultAttrs;
   this.getMethodName = getMethodName;
   this.getProperty = getProperty;
+  this.isDirective = isDirective;
   this.isSelfClosingDirective = isSelfClosingDirective;
   this.isSpecialTag = isSpecialTag;
 
@@ -65,13 +66,13 @@ function Shared() {
    * @returns {string} type of the element (id, class or tag)
    * @protected
    */
-  function getMethodName(attribute) {
+  function getMethodName(attribute, vm) {
     var methodName = attribute.replace('{{', '').replace('}}', '').trim();
-    var methodsStr = methodName.substring(0, 5);
+    var methodsStr = methodName.substring(0, vm.length + 1);
     var newMethod;
 
-    if (methodsStr === 'this.') {
-      newMethod = methodName.substring(5).replace(', ', ',');
+    if (methodsStr === vm + '.') {
+      newMethod = methodName.substring(vm.length + 1).replace(', ', ',');
       methodName = newMethod.substring(0, newMethod.indexOf('('));
 
       return methodName;
@@ -96,6 +97,23 @@ function Shared() {
     };
 
     return properties[property] || property;
+  }
+
+  /**
+   * Returns true if an element is a directive
+   *
+   * @param {string} element
+   * @returns {boolean} true if is a directive
+   * @protected
+   */
+  function isDirective(element) {
+    if (utils.isString(element) && utils.getRegexMatch(element, utils.getRegex('directive'))) {
+      return utils.getRegexMatch(element, utils.getRegex('directive'));
+    } else if (utils.isString(element)) {
+      return isSelfClosingDirective(element);
+    }
+
+    return false;
   }
 
   /**

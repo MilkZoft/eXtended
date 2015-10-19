@@ -11,13 +11,13 @@ describe('Templates', () => {
     it('should return compiled HTML', () => {
       var directiveProps = {
         props: {
-          $url: 'http://www.testurl.com',
-          $content: 'Foo'
+          url: 'http://www.testurl.com',
+          content: 'Foo'
         }
       };
-      var html = '<a href="{{ this.props.$url }}">{{ this.props.$content }}</a>';
+      var html = '<a href="{{ vmFoo.props.url }}">{{ vmFoo.props.content }}</a>';
       var expectedResult = '<a href="http://www.testurl.com">Foo</a>';
-      var actualResult = templates.getCompiledHTML(html, directiveProps);
+      var actualResult = templates.getCompiledHTML(html, directiveProps, {}, 'vmFoo');
 
       actualResult = actualResult[0].outerHTML;
 
