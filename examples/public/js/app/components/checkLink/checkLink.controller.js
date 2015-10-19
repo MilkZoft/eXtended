@@ -26,10 +26,10 @@ function CheckLinkCtrl() {
     });
 
     eX.render('#directive', '<CheckLink />', {
-      $url: {
+      url: {
         http: 'http://www.codejobs.biz'
       },
-      $content: 'Hello World'
+      content: 'Hello World'
     });
   }
 }

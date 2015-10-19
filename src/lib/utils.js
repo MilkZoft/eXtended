@@ -11,7 +11,6 @@ function Utils() {
   this.getStringFromJson = getStringFromJson;
   this.isArray = isArray;
   this.isDefined = isDefined;
-  this.isDirective = isDirective;
   this.isFunction = isFunction;
   this.isJson = isJson;
   this.isNull = isNull;
@@ -154,23 +153,6 @@ function Utils() {
     }
 
     return typeof value !== 'undefined' && value !== isNot;
-  }
-
-  /**
-   * Returns true if an element is a directive
-   *
-   * @param {string} element
-   * @returns {boolean} true if is a directive
-   * @protected
-   */
-  function isDirective(element) {
-    if (isString(element) && getRegexMatch(element, getRegex('directive'))) {
-      return true;
-    } else if (isString(element)) {
-      return !!getRegexMatch(element, getRegex('selfClosingDirective'));
-    }
-
-    return false;
   }
 
   /**

@@ -4,7 +4,6 @@ var utils = require('../../src/lib/utils');
 
 describe('Utils', () => {
   var directiveWithAttributes = '<TestDirective attr1="foo" attr2="bar"></TestDirective>';
-  var invalidDirective = '<TestDirective>';
   var selfClosingDirective = '<TestDirective />';
 
   describe('#exists', () => {
@@ -241,30 +240,6 @@ describe('Utils', () => {
     it('should validate if a variable is defined and is different than the second param', () => {
       var value = 'isNotFoo';
       assert.isTrue(utils.isDefined(value, 'isFoo'), 'value should not be isFoo');
-    });
-  });
-
-  describe('#isDirective', () => {
-    it('should be a function', () => {
-      assert.typeOf(utils.isDirective, 'function', 'isDirective should be a function');
-    });
-
-    it('should validate if a given string is a self closing directive', () => {
-      var actualResult = utils.isDirective(selfClosingDirective);
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if a given string is a directive with attributes', () => {
-      var actualResult = utils.isDirective(directiveWithAttributes);
-
-      assert.isTrue(actualResult, 'actualResult should be true');
-    });
-
-    it('should validate if a given string is not a valid directive', () => {
-      var actualResult = utils.isDirective(invalidDirective);
-
-      assert.isFalse(actualResult, 'actualResult should be false');
     });
   });
 

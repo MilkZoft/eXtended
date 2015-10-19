@@ -17,7 +17,7 @@ function Templates() {
    * @returns {string} compiled HTML
    * @protected
    */
-  function getCompiledHTML(html, directiveProps, directiveClass) {
+  function getCompiledHTML(html, directiveProps, directiveClass, vm) {
     var methodName;
     var methodsStr;
     var newMethod;
@@ -30,25 +30,26 @@ function Templates() {
     var variableName;
     var variablesMatch = utils.getRegexMatch(html, utils.getRegex('curlyBrackets'));
     var methods = [];
+    var vmLength = vm.length;
 
     // If found at least 1 variable inside {{ ... }}
     utils.forEach(variablesMatch, function(variable) {
       // Getting the name of the variable
       variableName = variable.replace('{{', '').replace('}}', '').trim();
-      propsStr = variableName.substring(0, 11);
-      methodsStr = variableName.substring(0, 5);
+      propsStr = variableName.substring(0, vmLength + 7);
+      methodsStr = variableName.substring(0, vmLength + 1);
 
       // If there are props
-      if (propsStr === 'this.props.') {
-        newVariable = variableName.substring(11);
+      if (propsStr === vm + '.props.') {
+        newVariable = variableName.substring(vmLength + 7);
 
         // If the newVariable exists in the directiveProps then replace it for the value
         if (utils.isDefined(directiveProps.props[newVariable])) {
           html = html.replace(variable, directiveProps.props[newVariable]);
         }
-      } else if (methodsStr === 'this.') {
+      } else if (methodsStr === vm + '.') {
         // If found a method...
-        newMethod = variableName.substring(5).replace(', ', ',');
+        newMethod = variableName.substring(vmLength + 1).replace(', ', ',');
         methodName = newMethod.substring(0, newMethod.indexOf('('));
         params = utils.getRegexMatch(newMethod, utils.getRegex('params'));
 
@@ -68,10 +69,10 @@ function Templates() {
             } else if (!isNaN(parseInt(param))) {
               param = parseInt(param);
             } else {
-              propsStr = param.substring(0, 11);
+              propsStr = param.substring(0, vmLength + 7);
 
-              if (propsStr === 'this.props.') {
-                newVariable = param.substring(11);
+              if (propsStr === vm + '.props.') {
+                newVariable = param.substring(vmLength + 7);
 
                 if (utils.isDefined(directiveProps.props[newVariable])) {
                   if (utils.isObject(directiveProps.props[newVariable])) {
@@ -97,7 +98,7 @@ function Templates() {
     });
 
     // Attaching events
-    return dom.attachEvents(html, directiveClass, methods);
+    return dom.attachEvents(html, directiveClass, methods, vm);
   }
 }
 

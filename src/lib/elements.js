@@ -101,11 +101,14 @@ function Elements() {
     var directiveClass;
     var properties = {};
     var newElements;
+    var vm;
+    var directive = shared.isDirective(elements[0]);
 
     // Rendering a directive
-    if (utils.isDirective(elements[0])) {
+    if (directive) {
       if (utils.isObject(elements[1])) {
         properties = elements[1];
+        vm = elements[2] || 'vm' + directive;
       }
 
       // Setting the target of the directive
@@ -119,7 +122,7 @@ function Elements() {
       directiveClass = directives.getDirective(directiveProps.props.$directiveName);
 
       // Getting the compiled HTML as new DOM element
-      newElements = templates.getCompiledHTML(directiveClass.render(), directiveProps, directiveClass);
+      newElements = templates.getCompiledHTML(directiveClass.render(), directiveProps, directiveClass, vm);
 
       // Removing used directive (free memory)
       directives.removeDirective(directiveProps.props.$directiveName);

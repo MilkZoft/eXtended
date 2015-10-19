@@ -25,7 +25,7 @@ function Dom() {
    * @param {array} params
    * @protected
    */
-  function attachEvents(html, directiveClass, methods) {
+  function attachEvents(html, directiveClass, methods, vm) {
     var analyzedAttributes = [];
     var children = [];
     var event;
@@ -45,7 +45,7 @@ function Dom() {
               analyzedAttributes.push(hasEvent[0]);
 
               event = hasEvent[1];
-              methodName = shared.getMethodName(hasEvent[0]);
+              methodName = shared.getMethodName(hasEvent[0], vm);
               methodObj = tempMethods.shift();
 
               if (utils.isDefined(directiveClass[methodName])) {
