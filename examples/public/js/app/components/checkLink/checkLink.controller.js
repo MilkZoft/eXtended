@@ -26,6 +26,7 @@ function CheckLinkCtrl() {
     });
 
     eX.render('#directive', '<CheckLink />', {
+      items: 1,
       url: {
         http: 'http://www.codejobs.biz'
       },

@@ -10,7 +10,7 @@ function Dom() {
   this.getElement = getElement;
   this.getElementNameAndType = getElementNameAndType;
   this.getElementType = getElementType;
-  this.hasExEvent = hasExEvent;
+  this.hasExEventOrExDirective = hasExEventOrExDirective;
   this.newElement = newElement;
 
   return this;
@@ -25,7 +25,7 @@ function Dom() {
    * @param {array} params
    * @protected
    */
-  function attachEvents(html, directiveClass, methods, vm) {
+  function attachEvents(html, directiveClass, methods, vm, directiveProps) {
     var analyzedAttributes = [];
     var children = [];
     var event;
@@ -37,10 +37,12 @@ function Dom() {
     var loop = function(element) {
       do {
         if (element.nodeType === 1) {
-          // Returns an array or false (0 = attribute & 1 = event)
-          hasEvent = hasExEvent(element);
+          // Returns an array or false (0 = attribute & 1 = event & 2 = element)
+          hasEvent = hasExEventOrExDirective(element, directiveClass, methods, vm, directiveProps);
 
           if (hasEvent) {
+            element = hasEvent[2];
+
             if (!utils.exists(hasEvent[0], analyzedAttributes)) {
               analyzedAttributes.push(hasEvent[0]);
 
@@ -192,7 +194,7 @@ function Dom() {
    * @returns {array} attribute and event
    * @protected
    */
-  function hasExEvent(element) {
+  function hasExEventOrExDirective(element, directiveClass, methods, vm, directiveProps) {
     var exEvents = [
       'ex-click',
       'ex-change',
@@ -207,8 +209,26 @@ function Dom() {
       'mouseout',
       'keydown'
     ];
+    var exDirectives = [
+      'ex-if',
+      'ex-show',
+      'ex-hide'
+    ];
     var event;
     var i;
+    var j;
+    var exDirective;
+    var evalQuery;
+    var evalResult;
+    var exDirectiveRegex;
+    var directivesWithActions = {
+      'ex-if':   ['display', 'none', false],
+      'ex-show': ['visibility', 'hidden', false],
+      'ex-hide': ['visibility', 'hidden', true]
+    };
+    var styleName;
+    var styleValue;
+    var styleResult;
 
     for (i = 0; i < exEvents.length; i++) {
       if (element.hasAttribute(exEvents[i])) {
@@ -218,7 +238,30 @@ function Dom() {
           event = 'click';
         }
 
-        return [element.getAttribute(exEvents[i]), event];
+        for (j = 0; j < exDirectives.length; j++) {
+          if (element.hasAttribute(exDirectives[j])) {
+            exDirective = element.getAttribute(exDirectives[j]);
+
+            if (exDirective.substring(0, 2) === '{{') {
+              exDirectiveRegex = new RegExp(vm, 'g');
+              exDirective = exDirective.replace('{{', '').replace('}}', '').trim();
+              exDirective = exDirective.replace(exDirectiveRegex, 'directiveProps');
+
+              evalQuery = '(' + exDirective + ') ? true : false';
+              evalResult = eval(evalQuery);
+              styleResult = directivesWithActions[exDirectives[j]][2];
+
+              if (directivesWithActions[exDirectives[j]] && styleResult === evalResult) {
+                styleName = directivesWithActions[exDirectives[j]][0];
+                styleValue = directivesWithActions[exDirectives[j]][1];
+
+                element.style[styleName] = styleValue;
+              }
+            }
+          }
+        }
+
+        return [element.getAttribute(exEvents[i]), event, element];
       }
     }
 

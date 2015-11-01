@@ -98,7 +98,7 @@ function Templates() {
     });
 
     // Attaching events
-    return dom.attachEvents(html, directiveClass, methods, vm);
+    return dom.attachEvents(html, directiveClass, methods, vm, directiveProps);
   }
 }
 

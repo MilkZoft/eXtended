@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<div class="otros" ex-click="{{ vmCheckLink.showMessage2('Funciona perfecto') }}">
+<div ex-hide="{{ vmCheckLink.props.items === 1 && vmCheckLink.props.url }}" class="otros" ex-click="{{ vmCheckLink.showMessage2('Funciona perfecto') }}">
   Holaaaa desde otros
 
   <input id="text" ex-keydown="{{ vmCheckLink.showMessage2('En el keydown') }}" />
