@@ -104,9 +104,9 @@ describe('Dom', () => {
     });
   });
 
-  describe('#hasExEvent', () => {
+  describe('#hasExEventOrExDirective', () => {
     it('should be a function', () => {
-      assert.typeOf(dom.hasExEvent, 'function', 'hasExEvent should be a function');
+      assert.typeOf(dom.hasExEventOrExDirective, 'function', 'hasExEventOrExDirective should be a function');
     });
   });
 
