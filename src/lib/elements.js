@@ -15,8 +15,8 @@ function Elements() {
   return this;
 
   /**
-   * Creates a new element (with or without id & class).
-   *
+   * @name create
+   * @description Creates a new element (with or without id & class).
    * @param {string} tag
    * @param {object || string || boolean} props = false
    * @param {string} content
